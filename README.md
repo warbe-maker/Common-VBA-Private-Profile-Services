@@ -1,4 +1,4 @@
-## VBA _Private Profile_ file services
+## Common VBA _Private Profile_ file services
 Simplifies and unifies _Private Profile_ file services by supporting:
 - section separation (default)
 - file header and footer (optional)
