@@ -1,10 +1,10 @@
 ## Common VBA _Private Profile_ file services
 Simplifies and unifies _Private Profile_ file services by supporting:
-- section separation (default)
-- file header and footer (optional)
-- section and value comments (optional)
-- content in ascending order (on the fly)
-- any number of _Private Profile_ files in one class instance [^1] 
+- Section separation (default)
+- File header and footer (optional)
+- Section and value comments (optional)
+- Sections and value.names in ascending order (on the fly)
+- Any number of _Private Profile_ files in one class instance [^1] 
 
 The following is an example of the simplification:  
 - Value read: `<value> = Value(<value_name>, <section_name>[, <file_name>])`
