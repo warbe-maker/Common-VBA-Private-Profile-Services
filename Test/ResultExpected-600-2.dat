@@ -1,0 +1,8 @@
+; File Comment Line 1 (the delimiter below is adjusted to the longest comment)
+; File Comment Line 2
+; ============================================================================
+[Any-Section-Name]
+Any-Value-Name=Any-Value
+; ---------------------------------------------------------------------------
+; File Footer Line 1 (the delimiter below is adjusted to the longest comment)
+; File Footer Line 2

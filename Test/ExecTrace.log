@@ -1,0 +1,15 @@
+24-11-26 16:56:52 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-11-26 16:56:52 seconds seconds >> Test class module clsPrivProf
+24-11-26 16:56:52 00,0000         |  >> mPrivProfTest.Test_600_Lifecycle
+24-11-26 16:58:05 73,0362 73,0362 |  << mPrivProfTest.Test_600_Lifecycle
+24-11-26 16:58:05 73,0362 73,0362 << Test class module clsPrivProf
+24-11-26 16:58:05                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-11-26 16:58:05                 Impact on the overall performance (caused by the trace itself): 0,9 milliseconds!
+===========================================================================================================================================
+24-11-26 17:03:23 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-11-26 17:03:23 seconds seconds >> Test class module clsPrivProf
+24-11-26 17:03:23 00,0000         |  >> mPrivProfTest.Test_600_Lifecycle
+24-11-26 17:03:25 02,0023 02,0023 |  << mPrivProfTest.Test_600_Lifecycle (VB-Runtime Error 53 )
+24-11-26 17:03:25 02,0023 02,0023 << Test class module clsPrivProf
+24-11-26 17:03:25                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-11-26 17:03:25                 Impact on the overall performance (caused by the trace itself): 9,0 milliseconds!

@@ -105,7 +105,7 @@ End Function
 Public Sub Prepare(Optional ByVal p_no As Long = 1, _
                    Optional ByVal p_init As Boolean = True)
 ' ----------------------------------------------------------------------------
-' Prepares for a new test:
+' Prepares for a new test or series of tests:
 ' 1. A test Private Profile file considering a nmber (p_no)
 ' 2. A new clsPrivProf class instance
 ' 3. By default, initializes the FileName property (p_init)
@@ -117,7 +117,14 @@ Public Sub Prepare(Optional ByVal p_no As Long = 1, _
     On Error GoTo eh
     Dim sFile As String
     
-    If TestAid Is Nothing Then Set TestAid = New clsTestAid
+    If TestAid Is Nothing Then
+        Set TestAid = New clsTestAid
+        TestAid.ModeRegression = mErH.Regression
+        mTrc.FileFullName = TestAid.TestFolder & "\ExecTrace.log"
+        mTrc.Title = "Test class module clsPrivProf"
+        mTrc.NewFile
+    End If
+    
     Set PrivProf = Nothing
     Set PrivProf = New clsPrivProf
     PrivProfTests.ProvideTestPrivProf p_no
@@ -196,16 +203,9 @@ Public Sub Test_001_TestAid()
     BoP ErrSrc(PROC)
     Prepare 1, False
     With TestAid
-        .ModeRegression = mErH.Regression
-        .TestNumber = "001-1"
-        .TestedComp = "clsPrivProf"
-        .TestHeadLine = "clsTestAid Result versus ResultExpected"
-        PrivProf.FileName = PrivProfTests.PrivProfFileFullName
-
-        
-        .TestNumber = "001-2"
+        .TestId = "001-1"
         .TestedComp = "clsTestAid"  ' remains the default for all subsequent tests
-        .TestedProc = "Result and .ResultExpected"
+        .TestedProc = "Result-Let, ResultExpected-Let"
         .TestedType = "Property"
         .Verification = "Result is the result expected"
         .ResultExpected = True
@@ -213,9 +213,8 @@ Public Sub Test_001_TestAid()
         .Result = True
         .TimerEnd
         ' ======================================================================
-        .TestHeadLine = vbNullString
         
-        .TestNumber = "001-3"
+        .TestId = "001-3"
         .TestedProc = "Result and .ResultExpected"
         .TestedType = "Property"
         .Verification = "Result is  F a i l e d  because the result/expected boolean differs"
@@ -225,16 +224,16 @@ Public Sub Test_001_TestAid()
         .TimerEnd
         ' ======================================================================
                 
-        .TestNumber = "001-5"
+        .TestId = "001-5"
         .TestedProc = "Result and .ResultExpected"
         .TestedType = "Property"
         .Verification = "Result is  F a i l e d  because result/expected files differ"
         .ResultExpected = "ResultExpected," & sFileExpected
-        .TestItem = sFileExpected
+        .TempTestItem = sFileExpected
         .TimerStart
         .Result = "Result," & sFileResult
         .TimerEnd
-        .TestItem = sFileResult
+        .TempTestItem = sFileResult
         ' ======================================================================
         If Not .ModeRegression Then .ResultSummaryLog
     End With
@@ -257,9 +256,9 @@ Public Sub Test_100_Property_FileName()
     BoP ErrSrc(PROC)
     Prepare 1, False ' The FileName property is provided in the test
     With TestAid
-        .TestNumber = "100-1"
+        .TestId = "100-1"
         .TestedComp = "clsPrivProf"
-        .TestedProc = "FileName_Let"
+        .TestedProc = "FileName-Let"
         .TestedType = "Property"
         .TestHeadLine = "Property FileName"
         
@@ -271,12 +270,12 @@ Public Sub Test_100_Property_FileName()
         .Result = PrivProf.FileName
         ' ======================================================================
         
-        .TestNumber = "100-2"
+        .TestId = "100-2"
         .TestedProc = "Let FileName"
         .TestedType = "Property"
         
         .Verification = "Specifying the full name of an existing Private Profile file"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.FileName = PrivProfTests.PrivProfFileFullName ' continue with current test file
         .TimerEnd
@@ -307,7 +306,7 @@ Public Sub Test_110_Method_Exists()
         .TestHeadLine = "Exists method"
         .TestedProc = "Exists"
         .TestedType = "Method"
-        .TestNumber = "110-1"
+        .TestId = "110-1"
         
         .Verification = "Section not exists"
         .ResultExpected = False
@@ -318,7 +317,7 @@ Public Sub Test_110_Method_Exists()
         ' ======================================================================
         .TestHeadLine = vbNullString
         
-        .TestNumber = "110-3"
+        .TestId = "110-3"
         .TestedProc = "Exists"
         .TestedType = "Method"
         
@@ -330,7 +329,7 @@ Public Sub Test_110_Method_Exists()
         .Result = vResult
         ' ======================================================================
         
-        .TestNumber = "110-4"
+        .TestId = "110-4"
         .TestedProc = "Exists"
         .TestedType = "Method"
         
@@ -342,7 +341,7 @@ Public Sub Test_110_Method_Exists()
         .Result = vResult
         ' ======================================================================
         
-        .TestNumber = "110-5"
+        .TestId = "110-5"
         .TestedProc = "Exists"
         .TestedType = "Method"
         
@@ -379,7 +378,7 @@ Public Sub Test_120_Property_Value()
     
     With TestAid
         .TestHeadLine = "Property Value"
-        .TestNumber = "120-1"
+        .TestId = "120-1"
         .TestedProc = "Get Value"
         .TestedType = "Property"
         
@@ -393,7 +392,7 @@ Public Sub Test_120_Property_Value()
         ' ======================================================================
         .TestHeadLine = vbNullString
         
-        .TestNumber = "120-2"
+        .TestId = "120-2"
         .TestedProc = "Get Value"
         .TestedType = "Property"
         
@@ -406,7 +405,7 @@ Public Sub Test_120_Property_Value()
         .Result = vResult
         ' ======================================================================
         
-        .TestNumber = "120-3"
+        .TestId = "120-3"
         .TestedProc = "Let Value"
         .TestedType = "Property"
         
@@ -420,7 +419,7 @@ Public Sub Test_120_Property_Value()
                                , name_section:=PrivProfTests.SectionName(4))
         ' ======================================================================
         
-        .TestNumber = "120-4"
+        .TestId = "120-4"
         .TestedProc = "Let Value"
         .TestedType = "Property"
         
@@ -434,12 +433,12 @@ Public Sub Test_120_Property_Value()
                               , name_section:=PrivProfTests.SectionName(2))
         ' ======================================================================
         
-        .TestNumber = "120-5"
+        .TestId = "120-5"
         .TestedProc = "Let Value"
         .TestedType = "Property"
         
         .Verification = "Write new value in new section"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.Value(name_value:=PrivProfTests.ValueName(11, 1) _
                      , name_section:=PrivProfTests.SectionName(11)) = "New value, new section"
@@ -447,12 +446,12 @@ Public Sub Test_120_Property_Value()
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
         
-        .TestNumber = "120-6"
+        .TestId = "120-6"
         .TestedProc = "Let Value"
         .TestedType = "Property"
         
         .Verification = "Change value plus the value and the section comments"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.Value(name_value:=PrivProfTests.ValueName(11, 1) _
                      , name_section:=PrivProfTests.SectionName(11) _
@@ -461,12 +460,12 @@ Public Sub Test_120_Property_Value()
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
         
-        .TestNumber = "120-7"
+        .TestId = "120-7"
         .TestedProc = "Let Value"
         .TestedType = "Property"
         
         .Verification = "Changed again"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.Value(name_value:=PrivProfTests.ValueName(11, 1) _
                      , name_section:=PrivProfTests.SectionName(11) _
@@ -512,12 +511,12 @@ Public Sub Test_200_Property_Comments()
         End If
         
         BoP ErrSrc(PROC)
-        .TestNumber = "200-1"
+        .TestId = "200-1"
         .TestedProc = "FileHeader-Let"
         .TestedType = "Property"
 
         .Verification = "Write a file header (not provided delimiter line added by system)"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         '~~ Note: For the missing file name the property FileName is used
         '~~ and the missing section- and value-name indicate a file header
@@ -528,7 +527,7 @@ Public Sub Test_200_Property_Comments()
         .TestHeadLine = vbNullString ' must not been repeated for each subsequent test
         ' ======================================================================
 
-        .TestNumber = "200-3"
+        .TestId = "200-3"
         .TestedProc = "FileHeader-Get"
         .TestedType = "Property"
 
@@ -543,12 +542,12 @@ Public Sub Test_200_Property_Comments()
         .Result = vResult
         ' ======================================================================
         
-        .TestNumber = "200-4"
+        .TestId = "200-4"
         .TestedProc = "SectionComment-Let"
         .TestedType = "Property"
         
         .Verification = "Write section comment"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.SectionComment(PrivProfTests.SectionName(6)) = "Comment Section 06 Line 1" _
                                                      & vbCrLf & "Comment Section 06 Line 2"
@@ -556,7 +555,7 @@ Public Sub Test_200_Property_Comments()
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
         
-        .TestNumber = "200-5"
+        .TestId = "200-5"
         .TestedProc = "SectionComment-Get"
         .TestedType = "Property"
         
@@ -569,12 +568,12 @@ Public Sub Test_200_Property_Comments()
         .Result = vResult
         ' =====================================================================
         
-        .TestNumber = "200-6"
+        .TestId = "200-6"
         .TestedProc = "ValueComment-Let"
         .TestedType = "Property"
         
         .Verification = "Write value comment"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.ValueComment(PrivProfTests.ValueName(6, 2), PrivProfTests.SectionName(6)) = "Comment Section 06 Value 02 Line 1" _
                                                                                   & vbCrLf & "Comment Section 06 Value 02 Line 2"
@@ -582,7 +581,7 @@ Public Sub Test_200_Property_Comments()
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
         
-        .TestNumber = "200-7"
+        .TestId = "200-7"
         .TestedProc = "Value-Comment-Get"
         .TestedType = "Property"
         
@@ -622,7 +621,7 @@ Public Sub Test_300_Method_SectionNames()
        
     With TestAid
         .TestHeadLine = "SectionNames service"
-        .TestNumber = "300-1"
+        .TestId = "300-1"
         .TestedProc = "SectionNames"
         .TestedType = "Function"
         
@@ -659,7 +658,7 @@ Public Sub Test_400_Method_ValueNames()
        
     With TestAid
         .TestHeadLine = "ValueNames service"
-        .TestNumber = "400-1"
+        .TestId = "400-1"
         .TestedProc = "ValueNames"
         .TestedType = "Function"
         .Verification = "Get all value names of all sections in a Dictionary"
@@ -671,7 +670,7 @@ Public Sub Test_400_Method_ValueNames()
         ' ======================================================================
         .TestHeadLine = vbNullString
     
-        .TestNumber = "400-2"
+        .TestId = "400-2"
         .TestedProc = "ValueNames"
         .TestedType = "Function"
         .Verification = "Get all value names of a certain section in a Dictionary"
@@ -682,7 +681,7 @@ Public Sub Test_400_Method_ValueNames()
         .Result = vResult
         ' ======================================================================
       
-        .TestNumber = "400-3"
+        .TestId = "400-3"
         Prepare 2
         .TestedProc = "ValueNames"
         .TestedType = "Function"
@@ -717,11 +716,11 @@ Public Sub Test_410_Method_ValueNameRename()
        
     With TestAid
         .TestHeadLine = "ValueNameRename service"
-        .TestNumber = "410-1"
+        .TestId = "410-1"
         .TestedProc = "ValueNameRename"
         .TestedType = "Method"
         .Verification = "Rename a value name in each section."
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.ValueNameRename PrivProfTests.ValueName(2, 2), "Renamed_" & PrivProfTests.ValueName(2, 2)
         .TimerEnd
@@ -754,12 +753,12 @@ Public Sub Test_500_Method_Remove()
     With TestAid
         .TestHeadLine = "Remove service"
         PrivProf.ValueComment(PrivProfTests.SectionName(6), PrivProfTests.ValueName(6, 4)) = "Comment value 06-04"
-        .TestNumber = "500-1"
+        .TestId = "500-1"
         .TestedProc = "ValueRemove"
         .TestedType = "Method"
         
         .Verification = "Remove a value from a section including its comments."
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.ValueRemove PrivProfTests.ValueName(6, 4), PrivProfTests.SectionName(6)
         .TimerEnd
@@ -768,38 +767,38 @@ Public Sub Test_500_Method_Remove()
         .TestHeadLine = vbNullString
         
         PrivProf.SectionComment(PrivProfTests.SectionName(6)) = "Comment section 06"
-        .TestNumber = "500-2"
+        .TestId = "500-2"
         .TestedProc = "SectionRemove"
         .TestedType = "Method"
         
         .Verification = "Removes a section including its comments."
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.SectionRemove PrivProfTests.SectionName(6)
         .TimerEnd
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
     
-        .TestNumber = "500-3"
+        .TestId = "500-3"
         Prepare 2
         .TestedProc = "ValueRemove"
         .TestedType = "Method"
         
         .Verification = "Remove 2 names in 2 sections."
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.ValueRemove name_value:="Last_Modified_AtDateTime,Last_Modified_InWbkFullName", name_section:="clsLog,clsQ"
         .TimerEnd
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
     
-        .TestNumber = "500-4"
+        .TestId = "500-4"
         Prepare 2
         .TestedProc = "ValueRemove"
         .TestedType = "Method"
         
         .Verification = "Removes all values in one section which removes the section."
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.ValueRemove name_value:="ExportFileExtention" & _
                                          ",Last_Modified_AtDateTime" & _
@@ -811,7 +810,7 @@ Public Sub Test_500_Method_Remove()
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
        
-        .TestNumber = "500-5"
+        .TestId = "500-5"
         Prepare 2
         .TestedProc = "ValueRemove"
         .TestedType = "Method"
@@ -855,21 +854,30 @@ Public Sub Test_600_Lifecycle()
     
     With TestAid
         .TestHeadLine = "A PrivateProfile file life-cycle"
-        .TestNumber = "600-1"
-        '~~ Begin with a non existing file.
-        '~~ Note 1: Since there is no file without at least one section with at least one value,
-        '~~         live starts with a value in a section in a yet not existing Private Profile file
-        '~~ Note 2: When a header/footer is specified, the strings may preferrably delimited by a vbCrLf
-        '~~         in order not to conflict withe any used character.
+        .TestId = "600-1"
+        .TestedProc = "FileHeader-Let, FileFooter-Let"
+        .TestedType = "Property"
+        .Verification = "New file, header and footer writing postponed"
+        '~~ Header and/or footer writing to a not yet active file will be
+        '~~ postponed until at least one user-value had been written.
         If FSo.FileExists(PrivProfTests.PrivProfFileFullName) Then .FSo.DeleteFile PrivProfTests.PrivProfFileFullName
         Set PrivProf = New clsPrivProf
         PrivProf.FileName = PrivProfTests.PrivProfFileFullName
+        .ResultExpected = True
+        .TimerStart
+        PrivProf.FileFooter() = "File Footer Line 1 (the delimiter below is adjusted to the longest comment)" & vbCrLf & _
+                                "File Footer Line 2"
+        PrivProf.FileHeader() = "File Comment Line 1 (the delimiter below is adjusted to the longest comment)" & vbCrLf & _
+                                "File Comment Line 2"
+        .TimerEnd
+        .Result = Not FSo.FileExists(PrivProfTests.PrivProfFileFullName)
+        ' ======================================================================
+        
+        .TestId = "600-2"
         .TestedProc = "Value-Let"
         .TestedType = "Property"
-        
-        .Verification = "Writes new file with 1 section and 1 value"
+        .Verification = "First value also writes postponed header and footer"
         PrivProf.FileName = PrivProfTests.PrivProfFileFullName
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
         .TimerStart
         PrivProf.Value(name_value:="Any-Value-Name" _
                     , name_section:="Any-Section-Name" _
@@ -877,44 +885,18 @@ Public Sub Test_600_Lifecycle()
                       ) = "Any-Value"
         .TimerEnd
         .Result = PrivProfTests.PrivProfFile
-        ' ======================================================================
-        .TestHeadLine = vbNullString
-        
-        .TestNumber = "600-2"
-        '~~ Beginning a non existing file with writing header and/or footer raises an error
-        '~~ (display ignored with Regression True)
-        '~~ Note: This is consequent since ther is no Private Profile file without
-        '~~       at least on section with one value
-        If FSo.FileExists(PrivProfTests.PrivProfFileFullName) Then FSo.DeleteFile PrivProfTests.PrivProfFileFullName
-        Set PrivProf = New clsPrivProf
-        PrivProf.FileName = PrivProfTests.PrivProfFileFullName
-        .TestedProc = "FileHeader-Let, FileFooter-Let"
-        .TestedType = "Property"
-        
-        .Verification = "Add file header and footer"
-        PrivProf.FileName = PrivProfTests.PrivProfFileFullName
-        .ResultExpected = True
-        mErH.Asserted AppErr(1) ' effective only when mErH.Regression = True
-        .TimerStart
-        PrivProf.FileFooter() = "File Footer Line 1 (the delimiter below is adjusted to the longest comment)" & vbCrLf & _
-                                "File Footer Line 2"
-        PrivProf.FileHeader() = "File Comment Line 1 (the delimiter below is adjusted to the longest comment)" & vbCrLf & _
-                                "File Comment Line 2"
-        .TimerEnd
-        mErH.Asserted ' reset to none
-        .Result = Not FSo.FileExists(PrivProfTests.PrivProfFileFullName)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         ' ======================================================================
         
-        .TestNumber = "600-3"
+        .TestId = "600-3"
+        .TestedProc = "ValueRemove"
+        .TestedType = "Method"
+        .Verification = "Removes the only value in the only section removes file"
         '~~ Removing the only value in the only section ends with no file
         '~~ Note: This is consequent since there is no Private Profile file without
         '~~       at least on section with one value
         Set PrivProf = New clsPrivProf
         PrivProf.FileName = PrivProfTests.PrivProfFileFullName
-        .TestedProc = "ValueRemove"
-        .TestedType = "Method"
-        
-        .Verification = "Removes the only value in the only section removes file"
         PrivProf.FileName = PrivProfTests.PrivProfFileFullName
         .ResultExpected = True
         .TimerStart
@@ -953,23 +935,23 @@ Public Sub Test_700_HskpngNames()
     Prepare 2   ' uses a ready for test file copied from a backup
     With TestAid
         .TestHeadLine = "Names housekeeping"
-        .TestNumber = "700-1"
+        .TestId = "700-1"
         .TestedProc = "HouskeepingNames"
         .TestedType = "Method"
         
         .Verification = "One Value-name change in two sections"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.HskpngNames PrivProf.FileName, "clsLog:clsQ:Last_Modified_AtDateTime>Last_Modified_UTC_AtDateTime"
         .TimerEnd
         .Result = PrivProfTests.PrivProfFile
         ' ======================================================================
                 
-        .TestNumber = "700-2"
+        .TestId = "700-2"
         Prepare 2   ' uses a ready for test file copied from a backup
         
         .Verification = "Two value-name changes in all sections"
-        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestNumber)
+        .ResultExpected = PrivProfTests.ExpectedTestResultFile(.TestId)
         .TimerStart
         PrivProf.HskpngNames PrivProf.FileName, "Last_Modified_AtDateTime>Last_Modified_UTC_AtDateTime" _
                                               , "LastModExpFileFullNameOrigin>Last_Modified_ExpFileFullNameOrigin"
@@ -978,7 +960,7 @@ Public Sub Test_700_HskpngNames()
         Set fleTestResult = PrivProfTests.PrivProfFile
         ' ======================================================================
         
-        .TestNumber = "700-3"
+        .TestId = "700-3"
         .Verification = "Two value-name changes in all sections (any subsequent once done)"
         .ResultExpected = fleTestResult
         .TimerStart

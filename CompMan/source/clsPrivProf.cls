@@ -139,23 +139,25 @@ Private Const VALUE_FALSE               As String = "FALSE"
 
 Private Declare PtrSafe Function apiShellExecute _
                 Lib "shell32.dll" Alias "ShellExecuteA" _
-               (ByVal hWnd As Long, _
+               (ByVal hwnd As Long, _
                 ByVal lpOperation As String, _
                 ByVal lpFile As String, _
                 ByVal lpParameters As String, _
                 ByVal lpDirectory As String, _
                 ByVal nShowCmd As Long) As Long
 
-Private bBooleanAsTrueFalseString   As Boolean      ' option, when TRUE a Boolean value is saved as a TRUE or FALSE string
-Private bSectionsSeparated          As Boolean      ' section separator line option, defaults to TRUE
-Private dctPPtwinsAsString          As Dictionary   ' file as string
+Private bBooleanAsTrueFalseString   As Boolean          ' option, when TRUE a Boolean value is saved as a TRUE or FALSE string
+Private bSectionsSeparated          As Boolean          ' section separator line option, defaults to TRUE
+Private dctFileFooterPostponed      As New Dictionary   ' for new files yet not active only
+Private dctFileHeaderPostponed      As New Dictionary   ' for new files yet not active only
+Private dctPPtwinsAsString          As Dictionary       ' file as string
 Private Reg                         As RegExp
 Private sFileFooter                 As String
-Private sFileFooterDelimiterChar    As String       ' the footer delimiter character (must be different from the above)
+Private sFileFooterDelimiterChar    As String           ' the footer delimiter character (must be different from the above)
 Private sFileHeader                 As String
-Private sFileHeaderDelimiterChar    As String       ' the header delimiter character
-Private sFileName                   As String       ' the current default Private Profile file's full name
-Private sSection                    As String       ' the current section of the above Private Profile file
+Private sFileHeaderDelimiterChar    As String           ' the header delimiter character
+Private sFileName                   As String           ' the current default Private Profile file's full name
+Private sSection                    As String           ' the current section of the above Private Profile file
 ' -----------------------------------------------------------------------------------------------------------------------------------------
 ' Private elements of Private Profile file twins structure used throughout this component for twin actions (indentaions = structure)
 Private dctPPtwins                                     As Dictionary ' All Private Profile file twins in a class instance (key = file-name)
@@ -198,6 +200,7 @@ End Sub
 Private Sub Class_Terminate()
     Set FSo = Nothing
     Set dctPPtwins = Nothing
+    Set dctFileHeaderPostponed = Nothing
 End Sub
 
 Private Property Get Arry(Optional ByRef c_arr As Variant, _
@@ -317,16 +320,23 @@ Public Property Let FileFooter(Optional ByVal name_file As String = vbNullString
     
     Dim sFooter As String
     
-    If Not IsValidFile(name_file) Then Err.Raise AppErr(1), ErrSrc(PROC), ErrInvalidFileName(name_file)
-    If Not FileIsActive(name_file) Then GoTo xt
-
     '~~ Make sure the provided footer lines are delimeted by vbCrLf
     sFooter = Replace(Replace(file_footer, vbLf, vbCrLf), vbCr & vbCrLf, vbCrLf)
     
+    If Not IsValidFile(name_file) Then Err.Raise AppErr(1), ErrSrc(PROC), ErrInvalidFileName(name_file)
+    If Not FileIsActive(name_file) Then
+        '~~ File footer needs to be postponed until file has become active,
+        '~~ i.e. has got at least one user section
+        If dctFileFooterPostponed.Exists(name_file) Then dctFileFooterPostponed.Remove name_file
+        dctFileFooterPostponed.Add name_file, sFooter
+        GoTo xt
+    End If
+     
     If sFileFooter <> sFooter Then
         PPtwinFileFooter(name_file) = FileFooterDelimiterAdd(StringAsCollection(sFooter))
         PPmanage name_file ' in case no value is changed or new
         sFileFooter = sFooter ' will be set when the file has become active
+        If dctFileFooterPostponed.Exists(name_file) Then dctFileFooterPostponed.Remove name_file
     End If
     
 xt: Exit Property
@@ -364,8 +374,8 @@ End Property
 
 Private Function FileIsActive(ByVal name_file As String) As Boolean
 ' ------------------------------------------------------------------------------
-' The function returns TRUE when the file (name_file) exists and has at least
-' one user section - with at least one value.
+' The function returns TRUE when the file (name_file) is regarded active in the
+' sense it has at least one user section (names housekeeping section excluded).
 ' ------------------------------------------------------------------------------
     Dim dctSects As Dictionary
     
@@ -387,24 +397,31 @@ Public Property Let FileHeader(Optional ByVal name_file As String, _
                                         ByVal file_header As String)
 ' ------------------------------------------------------------------------------
 ' Write a header for a file (name_fiel) provided as a strings delimited by
-' vbCrLf, ",", ", ", ";", or "; " by adding a header delimiter when not alrteady
+' vbCrLf, ",", ", ", ";", or "; " by adding a header delimiter when not already
 ' provided.
 ' ------------------------------------------------------------------------------
     Const PROC = "FileHeader-Let"
     
-    Dim sHeader As String
     Dim i       As Long
+    Dim sHeader As String
     
-    If Not IsValidFile(name_file) Then Err.Raise AppErr(1), ErrSrc(PROC), ErrInvalidFileName(name_file)
-    If Not FileIsActive(name_file) Then GoTo xt
-        
     '~~ Make sure the provided header lines are delimeted by vbCrLf
     sHeader = Replace(Replace(file_header, vbLf, vbCrLf), vbCr & vbCrLf, vbCrLf)
     
+    If Not IsValidFile(name_file) Then Err.Raise AppErr(1), ErrSrc(PROC), ErrInvalidFileName(name_file)
+    If Not FileIsActive(name_file) Then
+        '~~ File header needs to be postponed until file has become active,
+        '~~ i.e. has got at least one user section
+        If dctFileHeaderPostponed.Exists(name_file) Then dctFileHeaderPostponed.Remove name_file
+        dctFileHeaderPostponed.Add name_file, sHeader
+        GoTo xt
+    End If
+      
     If sFileHeader <> sHeader Then
         PPtwinFileHeader(name_file) = FileHeaderDelimiterAdd(StringAsCollection(sHeader))
         PPmanage name_file ' in case no value is changed or new
         sFileHeader = sHeader ' will be set when the file has become active
+        If dctFileHeaderPostponed.Exists(name_file) Then dctFileHeaderPostponed.Remove name_file
     End If
     
 xt: Exit Property
@@ -788,6 +805,7 @@ Public Property Let Value(Optional ByVal name_value As String = vbNullString, _
     Const PROC = "Value-Let"
         
     On Error GoTo eh
+    Dim s   As String
     
     If Not IsValidFile(name_file) Then Err.Raise AppErr(1), ErrSrc(PROC), ErrInvalidFileName(name_file)
     If Not IsValidNameSection(name_section) Then Err.Raise AppErr(2), ErrSrc(PROC), ErrInvalidSectName(name_section)
@@ -795,6 +813,20 @@ Public Property Let Value(Optional ByVal name_value As String = vbNullString, _
     
     PPtwinValue(name_value, name_section, name_file) = v_value
     PPmanage name_file ' re-setup the Private Profile file's twin
+    
+    If FileIsActive(name_file) Then
+        If dctFileHeaderPostponed.Exists(name_file) Then
+            '~~ There's still a header to be added which had to be postponed while the file was yet not active
+            s = dctFileHeaderPostponed(name_file)
+            FileHeader(name_file) = s
+        End If
+        If dctFileFooterPostponed.Exists(name_file) Then
+            '~~ There's still a foter to be added which had to be postponed while the file was yet not active
+            s = dctFileFooterPostponed(name_file)
+            FileFooter(name_file) = s
+        End If
+        PPmanage name_file ' re-setup the Private Profile file's twin
+    End If
     
 xt: Exit Property
 
@@ -2072,7 +2104,7 @@ Private Function KeySort(ByRef k_dct As Dictionary) As Dictionary
     Dim dct     As New Dictionary
     Dim vKey    As Variant
     Dim arr     As Variant
-    Dim Temp    As Variant
+    Dim temp    As Variant
     Dim i       As Long
     Dim j       As Long
     
@@ -2090,9 +2122,9 @@ Private Function KeySort(ByRef k_dct As Dictionary) As Dictionary
     For i = LBound(arr) To UBound(arr) - 1
         For j = i + 1 To UBound(arr)
             If arr(i) > arr(j) Then
-                Temp = arr(j)
+                temp = arr(j)
                 arr(j) = arr(i)
-                arr(i) = Temp
+                arr(i) = temp
             End If
         Next j
     Next i

@@ -1,29 +1,29 @@
-24-10-09 17:49:35 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
-24-10-09 17:49:35 seconds seconds >> Regression Test class module clsPrivProf
-24-10-09 17:49:35 00,0000         >> mPrivProfTest.Test_000_Regression
-24-10-09 17:49:35 00,0009         |  >> mPrivProfTest.Test_001_TestAid
-24-10-09 17:49:35 00,0154 00,0145 |  << mPrivProfTest.Test_001_TestAid
-24-10-09 17:49:35 00,0208         |  >> mPrivProfTest.Test_100_Property_FileName
-24-10-09 17:49:35 00,0331 00,0122 |  << mPrivProfTest.Test_100_Property_FileName
-24-10-09 17:49:35 00,0377         |  >> mPrivProfTest.Test_110_Methods_Exists
-24-10-09 17:49:35 00,0491 00,0114 |  << mPrivProfTest.Test_110_Methods_Exists
-24-10-09 17:49:35 00,0541         |  >> mPrivProfTest.Test_120_Property_Value
-24-10-09 17:49:35 00,0930 00,0389 |  << mPrivProfTest.Test_120_Property_Value
-24-10-09 17:49:35 00,1056         |  >> mPrivProfTest.Test_200_Property_Comments
-24-10-09 17:49:35 00,1206 00,0150 |  << mPrivProfTest.Test_200_Property_Comments
-24-10-09 17:49:35 00,1262         |  >> mPrivProfTest.Test_300_Method_SectionNames
-24-10-09 17:49:35 00,1350 00,0088 |  << mPrivProfTest.Test_300_Method_SectionNames
-24-10-09 17:49:35 00,1400         |  >> mPrivProfTest.Test_400_Method_ValueNames
-24-10-09 17:49:36 00,1782 00,0383 |  << mPrivProfTest.Test_400_Method_ValueNames
-24-10-09 17:49:36 00,1785         |  >> mPrivProfTest.Test_400_Method_ValueNameRename
-24-10-09 17:49:36 00,1909 00,0124 |  << mPrivProfTest.Test_400_Method_ValueNameRename
-24-10-09 17:49:36 00,1956         |  >> mPrivProfTest.Test_500_Method_Remove
-24-10-09 17:49:36 00,3182 00,1226 |  << mPrivProfTest.Test_500_Method_Remove
-24-10-09 17:49:36 00,3245         |  >> mPrivProfTest.Test_600_Lifecycle
-24-10-09 17:49:36 00,3297 00,0052 |  << mPrivProfTest.Test_600_Lifecycle
-24-10-09 17:49:36 00,3341         |  >> mPrivProfTest. Test_700_HskpngNames
-24-10-09 17:49:36 00,5200 00,1858 |  << mPrivProfTest. Test_700_HskpngNames
-24-10-09 17:49:36 00,6148 00,6148 << mPrivProfTest.Test_000_Regression
-24-10-09 17:49:36 00,6148 00,6148 << Regression Test class module clsPrivProf
-24-10-09 17:49:36                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
-24-10-09 17:49:36                 Impact on the overall performance (caused by the trace itself): 0,2 milliseconds!
+24-11-26 17:10:51 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-11-26 17:10:51 seconds seconds >> Regression Test class module clsPrivProf
+24-11-26 17:10:51 00,0000         |  >> mPrivProfTest.Test_000_Regression
+24-11-26 17:10:51 00,0008         |  >> mPrivProfTest.Test_001_TestAid
+24-11-26 17:10:51 00,0215 00,0207 |  << mPrivProfTest.Test_001_TestAid
+24-11-26 17:10:51 00,0267         |  >> mPrivProfTest.Test_100_Property_FileName
+24-11-26 17:10:51 00,0387 00,0120 |  << mPrivProfTest.Test_100_Property_FileName
+24-11-26 17:10:51 00,0437         |  >> mPrivProfTest.Test_110_Methods_Exists
+24-11-26 17:10:51 00,0553 00,0116 |  << mPrivProfTest.Test_110_Methods_Exists
+24-11-26 17:10:51 00,0606         |  >> mPrivProfTest.Test_120_Property_Value
+24-11-26 17:10:51 00,1114 00,0508 |  << mPrivProfTest.Test_120_Property_Value
+24-11-26 17:10:51 00,1259         |  >> mPrivProfTest.Test_200_Property_Comments
+24-11-26 17:10:51 00,1507 00,0248 |  << mPrivProfTest.Test_200_Property_Comments
+24-11-26 17:10:51 00,1591         |  >> mPrivProfTest.Test_300_Method_SectionNames
+24-11-26 17:10:51 00,1714 00,0123 |  << mPrivProfTest.Test_300_Method_SectionNames
+24-11-26 17:10:51 00,1772         |  >> mPrivProfTest.Test_400_Method_ValueNames
+24-11-26 17:10:51 00,2164 00,0392 |  << mPrivProfTest.Test_400_Method_ValueNames
+24-11-26 17:10:51 00,2168         |  >> mPrivProfTest.Test_400_Method_ValueNameRename
+24-11-26 17:10:51 00,2303 00,0136 |  << mPrivProfTest.Test_400_Method_ValueNameRename
+24-11-26 17:10:51 00,2356         |  >> mPrivProfTest.Test_500_Method_Remove
+24-11-26 17:10:51 00,3626 00,1269 |  << mPrivProfTest.Test_500_Method_Remove
+24-11-26 17:10:51 00,3683         |  >> mPrivProfTest.Test_600_Lifecycle
+24-11-26 17:10:51 00,3829 00,0146 |  << mPrivProfTest.Test_600_Lifecycle
+24-11-26 17:10:51 00,3876         |  >> mPrivProfTest. Test_700_HskpngNames
+24-11-26 17:10:52 00,7078 00,3202 |  << mPrivProfTest. Test_700_HskpngNames
+24-11-26 17:10:52 00,8582 00,8582 << mPrivProfTest.Test_000_Regression
+24-11-26 17:10:52 00,8582 00,8582 << Regression Test class module clsPrivProf
+24-11-26 17:10:52                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-11-26 17:10:52                 Impact on the overall performance (caused by the trace itself): 0,4 milliseconds!
