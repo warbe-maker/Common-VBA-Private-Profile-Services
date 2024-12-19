@@ -117,7 +117,7 @@ End Enum
 
 Private Declare PtrSafe Function apiShellExecute Lib "shell32.dll" _
     Alias "ShellExecuteA" _
-    (ByVal hwnd As Long, _
+    (ByVal hWnd As Long, _
     ByVal lpOperation As String, _
     ByVal lpFile As String, _
     ByVal lpParameters As String, _
@@ -950,28 +950,6 @@ Private Function CollectionAsArray(ByVal v_items As Collection) As Variant
     
 End Function
 
-Private Function ColMarginsAdded(ByVal c_col As Long, _
-                                 ByVal c_strng As String, _
-                                 ByVal c_margin As String, _
-                                 ByVal c_cols As Long) As String
-' -----------------------------------------------------------------------------------
-' Returns a string (c_strng) for a column (c_col) ammended with margins (c_margin),
-' whereby the leftmost column (1) has no left margin and the rightmost gets no right
-' margin. When the column (c_col) is 0 no margins are added (not a column alignment).
-' -----------------------------------------------------------------------------------
-                              
-    If c_col = 0 Then
-        ColMarginsAdded = c_strng
-    Else
-        If c_col = c_cols Then
-            ColMarginsAdded = c_margin & c_strng
-        Else
-            ColMarginsAdded = c_margin & c_strng & c_margin
-        End If
-    End If
-    
-End Function
-
 Private Function ColsHeadersLines(ByRef c_width As Long) As String
 ' ------------------------------------------------------------------------------
 ' Returns all header lines (aColsHeadersLines) as one string delimited by vbCrLf.
@@ -1590,12 +1568,10 @@ Public Sub Reorg(ByVal r_file_full_name As String, _
     On Error GoTo eh
     Dim aFile   As Variant
     Dim aLog    As Variant
-    Dim bAppend As Boolean
     Dim cllLog  As New Collection
     Dim cllLogs As New Collection
     Dim i       As Long
     Dim lLen    As Long
-    Dim s       As String
     Dim v       As Variant
     Dim bTop    As Boolean: bTop = True
     
