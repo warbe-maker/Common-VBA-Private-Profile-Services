@@ -725,8 +725,12 @@ Private Function AlignLeft(ByRef a_string As String, _
             Stop
         End If
     Loop
-    AlignLeft = s
-    If a_col_arranged Then AlignLeft = a_margin & s & a_margin _
+    If VBA.Trim$(a_string) = vbNullString Then
+        AlignLeft = String(Len(s), " ")
+    Else
+        AlignLeft = s
+    End If
+    If a_col_arranged Then AlignLeft = a_margin & AlignLeft & a_margin _
     
 End Function
 

@@ -1,0 +1,60 @@
+; File Comment Line 1 (the header delimiter is adjusted to the longest header line)
+; File Comment Line 2
+; =================================================================================
+[Section_02]
+Section_02_Name_02=Section_02-Value-02
+Section_02_Name_04=Section_02-Value-04
+Section_02_Name_06=Section_02-Value-06
+Section_02_Name_08=Section_02-Value-08
+Section_02_Name_10=Section_02-Value-10
+Section_02_Name_12=Section_02-Value-12
+Section_02_Name_14=Section_02-Value-14
+Section_02_Name_16=Section_02-Value-16
+Section_02_Name_17=New value, existing section
+
+[Section_04]
+Section_04_Name_02=Changed value
+Section_04_Name_04=Section_04-Value-04
+Section_04_Name_06=Section_04-Value-06
+Section_04_Name_08=Section_04-Value-08
+Section_04_Name_10=Section_04-Value-10
+Section_04_Name_12=Section_04-Value-12
+Section_04_Name_14=Section_04-Value-14
+Section_04_Name_16=Section_04-Value-16
+
+; Comment Section 06 Line 1
+; Comment Section 06 Line 2
+[Section_06]
+; Comment Section 06 Value 02 Line 1
+; Comment Section 06 Value 02 Line 2
+Section_06_Name_02=Section_06-Value-02
+Section_06_Name_04=Section_06-Value-04
+Section_06_Name_06=Section_06-Value-06
+Section_06_Name_08=Section_06-Value-08
+Section_06_Name_10=Section_06-Value-10
+Section_06_Name_12=Section_06-Value-12
+Section_06_Name_14=Section_06-Value-14
+Section_06_Name_16=Section_06-Value-16
+
+[Section_08]
+Section_08_Name_02=Section_08-Value-02
+Section_08_Name_04=Section_08-Value-04
+Section_08_Name_06=Section_08-Value-06
+Section_08_Name_08=Section_08-Value-08
+Section_08_Name_10=Section_08-Value-10
+Section_08_Name_12=Section_08-Value-12
+Section_08_Name_14=Section_08-Value-14
+Section_08_Name_16=Section_08-Value-16
+
+[Section_10]
+Section_10_Name_02=Section_10-Value-02
+Section_10_Name_04=Section_10-Value-04
+Section_10_Name_06=Section_10-Value-06
+Section_10_Name_08=Section_10-Value-08
+Section_10_Name_10=Section_10-Value-10
+Section_10_Name_12=Section_10-Value-12
+Section_10_Name_14=Section_10-Value-14
+Section_10_Name_16=Section_10-Value-16
+
+[Section_11]
+Section_11_Name_01=Changed again new value, new section

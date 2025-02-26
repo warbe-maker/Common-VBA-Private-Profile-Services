@@ -19,7 +19,7 @@ Option Compare Text
 ' Public properties: (* with the exception of these properties all properties
 '                       have arguments:
 ' ------------------
-' FileName *)     r/w Specifies/returns the Private Profile file full name
+' FileFullName *)     r/w Specifies/returns the Private Profile file full name
 '                     used as the default when the corresponding argument
 '                     is omitted.
 ' FileFooter      r/w Reads/writes a file footer
@@ -85,7 +85,7 @@ Option Compare Text
 '                 section in an (optionally) specified Private Profile file.
 '                 When the section is omitted, the value is removed from all
 '                 sections. When the file name is omitted it defaults to the
-'                 file specified by the FileName property.
+'                 file specified by the FileFullName property.
 ' Values          Writes a series of values to the current specified Private
 '                 Profile file's current section, whereby the arguments
 '                 are pairs of vaule-name, value.
@@ -154,8 +154,12 @@ Private sFileFooter                 As String
 Private sFileFooterDelimiterChar    As String           ' the footer delimiter character (must be different from the above)
 Private sFileHeader                 As String
 Private sFileHeaderDelimiterChar    As String           ' the header delimiter character
-Private sFileName                   As String           ' the current default Private Profile file's full name
 Private sSection                    As String           ' the current section of the above Private Profile file
+Private sFileExtension              As String
+Private sFileFullName               As String
+Private sFileLocation               As String
+Private sFileBaseName               As String
+
 ' -----------------------------------------------------------------------------------------------------------------------------------------
 ' Private elements of Private Profile file twins structure used throughout this component for twin actions (indentaions = structure)
 Private dctPPtwins                                     As Dictionary ' All Private Profile file twins in a class instance (key = file-name)
@@ -179,10 +183,10 @@ Private Sub Class_Initialize()
     Set dctPPtwins = New Dictionary
     Set dctPPtwinsAsString = New Dictionary
     
-    If sFileName = vbNullString Then
+    If sFileFullName = vbNullString Then
         '~~ Initialize the default Private Profile File name
-        Select Case Application.Name
-            Case "Microsoft Excel": sFileName = ThisWorkbook.Path & "\" & FSo.GetBaseName(ThisWorkbook.Name) & ".dat"
+        Select Case Application.name
+            Case "Microsoft Excel": sFileFullName = ThisWorkbook.Path & "\" & FSo.GetBaseName(ThisWorkbook.name) & ".dat"
             Case Else:              Err.Raise AppErr(1), ErrSrc(PROC), "Initializing the FileName failed!" & vbLf & _
                                                                        "The current Application.Name is not Excel " & _
                                                                        "and any other application is yet not supported!"
@@ -200,6 +204,18 @@ Private Sub Class_Terminate()
     Set dctPPtwins = Nothing
     Set dctFileHeaderPostponed = Nothing
 End Sub
+
+Public Property Get FileLocation() As String:              FileLocation = sFileLocation:                 End Property
+
+Public Property Let FileLocation(ByVal s As String):       sFileLocation = s:                             End Property
+
+Public Property Get FileBaseName() As String:               FileBaseName = sFileBaseName:                   End Property
+
+Public Property Let FileBaseName(ByVal s As String):        sFileBaseName = s:                              End Property
+
+Public Property Get FileExtension() As String:              FileExtension = sFileExtension:                 End Property
+    
+Public Property Let FileExtension(ByVal s As String):       sFileExtension = s:                             End Property
 
 Private Property Get Arry(Optional ByRef c_arr As Variant, _
                           Optional ByVal c_index As Long = -1) As Variant
@@ -423,16 +439,16 @@ Public Property Let FileHeader(Optional ByVal v_file_name As String, _
 xt: Exit Property
 End Property
 
-Public Property Get FileName() As String:               FileName = sFileName:       End Property
+Public Property Get FileFullName() As String:               FileFullName = sFileFullName:       End Property
 
-Public Property Let FileName(ByVal f_file As String)
+Public Property Let FileFullName(ByVal f_file As String)
 ' ----------------------------------------------------------------------------
-' Note: Only a FileName explicitely provided as Property becomes the default
+' Note: Only a FileFullName explicitely provided as Property becomes the default
 '       file name for an omitted file argument.
 '       Any file name provided as argument along with a property or method
 '       call is only valid for the call.
 ' ----------------------------------------------------------------------------
-    Const PROC = "FileName-Let"
+    Const PROC = "FileFullName-Let"
     
     On Error GoTo eh
     Dim sInvalidLine    As String
@@ -442,10 +458,16 @@ Public Property Let FileName(ByVal f_file As String)
     And Not IsValidFileContent(f_file, arr, sInvalidLine) _
     Then Err.Raise AppErr(2), ErrSrc(PROC), ErrInvalidFileContent(f_file, sInvalidLine)
     
-    sFileName = f_file
-    PPmanage f_file
-    sFileHeader = FileHeader(f_file) ' current header
-    sFileFooter = FileFooter(f_file) ' current footer
+    sFileFullName = f_file
+    With FSo
+        sFileLocation = .GetParentFolderName(sFileFullName)
+        sFileBaseName = .GetBaseName(sFileFullName)
+        sFileExtension = .GetExtensionName(sFileFullName)
+   End With
+    
+    PPmanage sFileFullName
+    sFileHeader = FileHeader(sFileFullName) ' current header
+    sFileFooter = FileFooter(sFileFullName) ' current footer
 
 xt: Exit Property
 
@@ -774,7 +796,7 @@ Public Property Get Value(Optional ByVal v_value_name As String = vbNullString, 
 ' Private Profile file (v_file_name) - plus its comment (it any) as a string of
 ' comment lines delimited with a "||".
 ' When no file (v_file_name) is provided it defaults to the file name specified
-' by the property FileName, when no section (v_section_name) is provided, the
+' by the property FileFullName, when no section (v_section_name) is provided, the
 ' section defaults to the section name provided by the property Section.
 ' ----------------------------------------------------------------------------
     Const PROC  As String = "Value-Get"
@@ -787,33 +809,31 @@ Public Property Get Value(Optional ByVal v_value_name As String = vbNullString, 
     
 End Property
 
-Public Sub Values(ParamArray v_values() As Variant)
+Public Sub Values(ByVal v_done As Boolean, ParamArray v_values() As Variant)
 ' ----------------------------------------------------------------------------
 ' Writes a series of values (v_values) to the current specified Private
-' Profile file's (FileName) current section (Section), whereby the arguments
+' Profile file's (FileFullName) current section (Section), whereby the arguments
 ' are pairs of vaule-name, value.
 ' ----------------------------------------------------------------------------
-    Dim sFile       As String
-    Dim sSection    As String
     Dim v           As Variant
     Dim sName       As String
     Dim sValue      As String
     
     If Not ArrayIsAllocated(v_values) Then GoTo xt
     
-    sFile = Me.FileName
-    sSection = Me.Section
     For Each v In v_values
         If sName = vbNullString Then
             sName = v
         Else
             sValue = v
-            PPtwinValue(sName, Section, FileName) = sValue
+            PPtwinValue(sName, Section, FileFullName) = sValue
             sName = vbNullString
         End If
     Next v
-    PPmanage FileName ' re-setup the Private Profile file's twin
-
+    If v_done Then
+        PPmanage FileFullName ' re-setup the Private Profile file's twin
+    End If
+    
 xt: Exit Sub
 End Sub
 
@@ -826,7 +846,7 @@ Public Property Let Value(Optional ByVal v_value_name As String = vbNullString, 
 ' Writes a value (v_value) under a given name (v_value_name) into a section
 ' (v_section_name) in a Private Profile file (v_file_name).
 ' When no file (v_file_name) is provided it defaults to the file name specified
-' by the property FileName, when no section (v_section_name) is provided, the
+' by the property FileFullName, when no section (v_section_name) is provided, the
 ' section defaults to the section name provided by the property Section.
 ' ----------------------------------------------------------------------------
     Const PROC = "Value-Let"
@@ -1280,7 +1300,7 @@ Private Function ErrInvalidFileName(ByVal s As String) As String
                          "          - an existing but empty file" & vbLf & _
                          "          - an existing file of which the content adheres to Private Profile file content rules." & vbLf & _
                          "            (see " & _
-                         "has one been specified explicitely through the FileName property!"
+                         "has one been specified explicitely through the FileFullName property!"
 End Function
 
 Private Function ErrInvalidSectName(ByVal s As String) As String
@@ -1562,7 +1582,7 @@ Private Function FileAsFile(ByVal f_file_in As File, _
     With FSo
         Select Case True
             Case f_rename And Not f_append:     If f_file_in.Path = .GetParentFolderName(f_file_out) _
-                                                Then f_file_in.Name = .GetFileName(f_file_out) _
+                                                Then f_file_in.name = .GetFileName(f_file_out) _
                                                 Else Err.Raise AppErr(1), ErrSrc(PROC), "File cannot be renamed when the provided file and the new file's name " & _
                                                                                         "do not point to the same location!"
             Case Not f_rename And Not f_append: .CopyFile f_file_in.Path, f_file_out
@@ -1799,7 +1819,7 @@ Public Sub HskpngNames(ByVal h_file As String, _
     If Not ArrayIsAllocated(h_hist) Then GoTo xt
     
     Set dctHist = ArrayAsDictionary(h_hist)
-    Set dctValsInv = DictionaryInverted(ValueNames(FileName, NAMES_HSKPNG_SECT_NAME))
+    Set dctValsInv = DictionaryInverted(ValueNames(FileFullName, NAMES_HSKPNG_SECT_NAME))
     For Each v In dctValsInv
         If Not dctHist.Exists(v) Then ValueRemove dctValsInv(v), NAMES_HSKPNG_SECT_NAME
     Next v
@@ -1905,7 +1925,7 @@ Private Function IsObject(ByVal i_var As Variant, _
     If Not VBA.IsObject(i_var) Then Exit Function
     IsObject = True
     On Error Resume Next
-    i_name = i_var.Name
+    i_name = i_var.name
     If Err.Number <> 0 _
     Then Err.Raise AppErr(1), ErrSrc(PROC), _
          "VarTrans tries to use the Name property of an object when it is to be " & _
@@ -1939,9 +1959,9 @@ Private Function IsValidFile(ByRef i_file As String, _
     On Error GoTo eh
     Dim sInvalidLine    As String
     
-    If i_file = vbNullString And sFileName <> vbNullString Then
+    If i_file = vbNullString And sFileFullName <> vbNullString Then
         '~~ The file has already been checked as valid
-        i_file = sFileName
+        i_file = sFileFullName
         IsValidFile = True
         If FSo.FileExists(i_file) Then
             i_valid = Not IsEmptyFile(i_file, i_arr)
@@ -1951,7 +1971,7 @@ Private Function IsValidFile(ByRef i_file As String, _
      End If
      
     '~~ An explicitely specified file name is checked for validity and when valid
-    '~~ becomes the FileName for all subsequent properties and methods which did not
+    '~~ becomes the FileFullName for all subsequent properties and methods which did not
     '~~ have a file name provided as argument.
     IsValidFile = True
     Select Case True
@@ -2452,7 +2472,9 @@ Private Function PPfileAsPPtwinSectComments(ByVal p_cll As Collection) As Collec
     Dim v   As Variant
     
     If bSectionsSeparated Then
-        If p_cll.Count = 0 Then
+        If p_cll Is Nothing Then
+            cll.Add vbNullString
+        ElseIf p_cll.Count = 0 Then
             '~~ No comments at all yet
             cll.Add vbNullString
         ElseIf Len(Trim(p_cll(1))) <> 0 Then
@@ -2460,9 +2482,11 @@ Private Function PPfileAsPPtwinSectComments(ByVal p_cll As Collection) As Collec
             cll.Add vbNullString
         End If
     End If
-    For Each v In p_cll
-        cll.Add v
-    Next v
+    If Not p_cll Is Nothing Then
+        For Each v In p_cll
+            cll.Add v
+        Next v
+    End If
     Set PPfileAsPPtwinSectComments = cll
     Set cll = Nothing
     
@@ -2670,16 +2694,29 @@ Private Sub PPtwinAsStringComments(ByRef p_arr As Variant, _
                                    ByVal p_cll As Collection, _
                           Optional ByVal p_header As Boolean = False, _
                           Optional ByVal p_footer As Boolean = False)
+' ----------------------------------------------------------------------------
+' Returns a collection of strings (p_cll) as an array of comments, i.e. with
+' a "; " prefixed. When the comments represent a header or a footer the
+' comments a provided with a header delimiter line or a foolter delimiter
+' line if missing.
+' ----------------------------------------------------------------------------
+    Const PROC = "PPtwinAsStringComments"
+    
+    On Error GoTo eh
     Dim v As Variant
     Dim s As String
     Dim l As Long
     
     If p_cll.Count > 0 Then
         If p_footer And Not IsDelimiterFileFooter(p_cll(1)) Then
-            Arry(p_arr) = "; " & String(l - 2, sFileFooterDelimiterChar)
+            '~~ Start with a footer delimiter line if the first item isn't one
+            For Each v In p_cll
+                l = Max(l, Len(v))
+            Next v
+            If l > 2 Then Arry(p_arr) = "; " & String(l - 2, sFileFooterDelimiterChar)
         End If
+        
         For Each v In p_cll
-            
             '~~ Accepts an empty line as a valid comment
             If v = vbNullString Then
                 Arry(p_arr) = v
@@ -2689,11 +2726,18 @@ Private Sub PPtwinAsStringComments(ByRef p_arr As Variant, _
                 Arry(p_arr) = s
             End If
         Next v
-        If p_header And Not IsDelimiterFileHeader(p_arr(UBound(p_arr))) Then
+        
+        If p_header And Not IsDelimiterFileHeader(p_arr(UBound(p_arr))) And l > 0 Then
             Arry(p_arr) = "; " & String(l - 2, sFileHeaderDelimiterChar)
         End If
     End If
     
+xt: Exit Sub
+
+eh: Select Case ErrMsg(ErrSrc(PROC))
+        Case vbResume:  Stop: Resume
+        Case Else:      GoTo xt
+    End Select
 End Sub
 
 Private Sub PPtwinClear()
@@ -3690,7 +3734,7 @@ Public Function ValueNames(Optional ByVal v_file_name As String = vbNullString, 
 ' When no section (name_sections) is specified the result is all value names in
 ' any section, if a section name is provided, only the value names is that
 ' section. When the file name (v_file_name) is ommitted it defaults to the name
-' specified by the FileName property.
+' specified by the FileFullName property.
 ' Note: The returned value-names are distinct names! I.e. when a value exists
 '       in more than one section it is still one distinct value-name.
 ' ----------------------------------------------------------------------------
@@ -3720,7 +3764,7 @@ Public Sub ValueRemove(ByVal v_value_name As String, _
 ' Attention! When no section is provided, the value/value-name is removed in
 ' all sections it is used.
 ' When no file (v_file_name) is provided it defaults to the file name specified
-' by the property FileName, when no section (v_section_name) is provided, the
+' by the property FileFullName, when no section (v_section_name) is provided, the
 ' section defaults to the section name provided by the Section property.
 ' ----------------------------------------------------------------------------
     Const PROC = "ValueRemove"

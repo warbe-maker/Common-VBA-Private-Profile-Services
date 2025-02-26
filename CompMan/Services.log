@@ -1,104 +1,48 @@
-24-12-19-15:54:48 ------------------------------------ Update Outdated Common Components (by CompMan.xlsb) for PrivProf.xlsb -------------------------------------
-24-12-19-15:54:48 ------------------------------------------------------------------------------------------------------------------------------------------------
-24-12-19-15:54:48  Class-Module     clsLog...........:  Code change: Line 0871 Serviced (CodeModule)....: Private Function ColMarginsAdded(ByVal c_col As Long, _ 
-24-12-19-15:54:48                   .................:  Code change: Line 0871 Serviced (Export-File)...: Private Function ColsHeadersLines(ByRef c_width As Long) As String 
-24-12-19-15:54:52  Class-Module     clsTestAid.......:  Serviced Common Component properties housekeeping:                                                                   
-24-12-19-15:54:52                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public                                    
-24-12-19-15:54:52  Standard-Module  mErH.............:  Code change: Line 0277 Serviced (CodeModule)...:                 MsgBox "When the err_buttons argument is a numeric value  o n l y  the valid VBA.MsgBox vaulues are supported. " & _ 
-24-12-19-15:54:52                   .................:  Code change: Line 0277 Public (Export-File)....:                 MsgBox "When the argument for the ""err_buttons"" parameter is a numeric value  o n l y  the valid VBA.MsgBox vaulues are supported. " & _ 
-24-12-19-15:54:59  Standard-Module  mMsg.............:  Code change: Line 0006 Serviced (CodeModule)...: ' Box         In analogy to the MsgBox, provides a simple message but with all                                                                             
-24-12-19-15:54:59                   .................:  Code change: Line 0006 Public (Export-File)....: ' Box            In analogy to the MsgBox, provides a simple message but with                                                                              
-24-12-19-15:55:01  Standard-Module  mCompManClient...:  Code change: Line 0007 Serviced (CodeModule)...: ' W. Rauschenberger, Berlin Jul 2024                                                                                                                       
-24-12-19-15:55:01                   .................:  Code change: Line 0007 Public (Export-File)....: ' W. Rauschenberger, Berlin Dec 2024                                                                                                                       
-24-12-19-15:55:06  Class-Module     clsPrivProf......:  Code change: Line 0086 Serviced (CodeModule)...: ' Requires:                                                                                                                                                
-24-12-19-15:55:06                   .................:  Code change: Line 0086 Public (Export-File)....: ' Requires: Reference to Microsoft Scripting Runtine                                                                                                       
-24-12-19-15:55:11  Standard-Module  mTrc.............:  Code change: Line 0121 Serviced (CodeModule)...: Private sPath               As String                                                                                                                      
-24-12-19-15:55:11                   .................:  Code change: Line 0121 Public (Export-File)....: Private TraceStack          As Collection       ' Trace stack for the trace log written to a file                                                          
-24-12-19-15:55:11  Class-Module     clsLog...........:  Code change: Line 0871 Serviced (CodeModule)...: Private Function ColMarginsAdded(ByVal c_col As Long, _                                                                                                    
-24-12-19-15:55:11                   .................:  Code change: Line 0871 Public (Export-File)....: Private Function ColsHeadersLines(ByRef c_width As Long) As String                                                                                         
-24-12-19-15:55:12  Class-Module     clsTestAid.......:  Serviced Common Component used is up-to-date                                                                                                                                                                
-24-12-19-15:55:27                   .................:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-15:56:03                   .................:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-15:57:14 ================================================================================================================================================
-24-12-19-15:57:14 ------------------------------------ Update Outdated Common Components (by CompMan.xlsb) for PrivProf.xlsb -------------------------------------
-24-12-19-15:57:14 ------------------------------------------------------------------------------------------------------------------------------------------------
-24-12-19-15:57:14  Class-Module     clsLog...........:  Code change: Line 0871 Serviced (CodeModule)....: Private Function ColMarginsAdded(ByVal c_col As Long, _ 
-24-12-19-15:57:14                   .................:  Code change: Line 0871 Serviced (Export-File)...: Private Function ColsHeadersLines(ByRef c_width As Long) As String 
-24-12-19-15:57:17  Class-Module     clsTestAid.......:  Serviced Common Component properties housekeeping:                                                                   
-24-12-19-15:57:17                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public                                    
-24-12-19-15:57:18  Standard-Module  mErH.............:  Code change: Line 0277 Serviced (CodeModule)...:                 MsgBox "When the err_buttons argument is a numeric value  o n l y  the valid VBA.MsgBox vaulues are supported. " & _ 
-24-12-19-15:57:18                   .................:  Code change: Line 0277 Public (Export-File)....:                 MsgBox "When the argument for the ""err_buttons"" parameter is a numeric value  o n l y  the valid VBA.MsgBox vaulues are supported. " & _ 
-24-12-19-15:58:17  Standard-Module  mMsg.............:  Code change: Line 0006 Serviced (CodeModule)...: ' Box         In analogy to the MsgBox, provides a simple message but with all                                                                             
-24-12-19-15:58:17                   .................:  Code change: Line 0006 Public (Export-File)....: ' Box            In analogy to the MsgBox, provides a simple message but with                                                                              
-24-12-19-15:58:25  Standard-Module  mCompManClient...:  Code change: Line 0007 Serviced (CodeModule)...: ' W. Rauschenberger, Berlin Jul 2024                                                                                                                       
-24-12-19-15:58:25                   .................:  Code change: Line 0007 Public (Export-File)....: ' W. Rauschenberger, Berlin Dec 2024                                                                                                                       
-24-12-19-15:58:34  Class-Module     clsPrivProf......:  Code change: Line 0086 Serviced (CodeModule)...: ' Requires:                                                                                                                                                
-24-12-19-15:58:34                   .................:  Code change: Line 0086 Public (Export-File)....: ' Requires: Reference to Microsoft Scripting Runtine                                                                                                       
-24-12-19-15:58:48  Standard-Module  mTrc.............:  Code change: Line 0121 Serviced (CodeModule)...: Private sPath               As String                                                                                                                      
-24-12-19-15:58:48                   .................:  Code change: Line 0121 Public (Export-File)....: Private TraceStack          As Collection       ' Trace stack for the trace log written to a file                                                          
-24-12-19-15:58:52  Class-Module     clsLog...........:  Code change: Line 0871 Serviced (CodeModule)...: Private Function ColMarginsAdded(ByVal c_col As Long, _                                                                                                    
-24-12-19-15:58:52                   .................:  Code change: Line 0871 Public (Export-File)....: Private Function ColsHeadersLines(ByRef c_width As Long) As String                                                                                         
-24-12-19-15:58:55  Class-Module     clsTestAid.......:  Serviced Common Component used is up-to-date                                                                                                                                                                
-24-12-19-16:00:50                   .................:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:06:42 ================================================================================================================================================
-24-12-19-16:06:42 ------------------------------------ Update Outdated Common Components (by CompMan.xlsb) for PrivProf.xlsb -------------------------------------
-24-12-19-16:06:42 ------------------------------------------------------------------------------------------------------------------------------------------------
-24-12-19-16:06:42  Class-Module     clsLog...........:  Code change: Line 0871 Serviced (CodeModule)....: Private Function ColMarginsAdded(ByVal c_col As Long, _ 
-24-12-19-16:06:42                   .................:  Code change: Line 0871 Serviced (Export-File)...: Private Function ColsHeadersLines(ByRef c_width As Long) As String 
-24-12-19-16:06:46  Class-Module     clsTestAid.......:  Serviced Common Component properties housekeeping:                                                                   
-24-12-19-16:06:46                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public                                    
-24-12-19-16:06:52  Standard-Module  mErH.............:  Code change: Line 0277 Serviced (CodeModule)...:                 MsgBox "When the err_buttons argument is a numeric value  o n l y  the valid VBA.MsgBox vaulues are supported. " & _ 
-24-12-19-16:06:52                   .................:  Code change: Line 0277 Public (Export-File)....:                 MsgBox "When the argument for the ""err_buttons"" parameter is a numeric value  o n l y  the valid VBA.MsgBox vaulues are supported. " & _ 
-24-12-19-16:07:50  Standard-Module  mMsg.............:  Code change: Line 0006 Serviced (CodeModule)...: ' Box         In analogy to the MsgBox, provides a simple message but with all                                                                             
-24-12-19-16:07:50                   .................:  Code change: Line 0006 Public (Export-File)....: ' Box            In analogy to the MsgBox, provides a simple message but with                                                                              
-24-12-19-16:07:52  Standard-Module  mCompManClient...:  Code change: Line 0007 Serviced (CodeModule)...: ' W. Rauschenberger, Berlin Jul 2024                                                                                                                       
-24-12-19-16:07:52                   .................:  Code change: Line 0007 Public (Export-File)....: ' W. Rauschenberger, Berlin Dec 2024                                                                                                                       
-24-12-19-16:07:54  Class-Module     clsPrivProf......:  Code change: Line 0086 Serviced (CodeModule)...: ' Requires:                                                                                                                                                
-24-12-19-16:07:54                   .................:  Code change: Line 0086 Public (Export-File)....: ' Requires: Reference to Microsoft Scripting Runtine                                                                                                       
-24-12-19-16:07:55  Standard-Module  mTrc.............:  Code change: Line 0121 Serviced (CodeModule)...: Private sPath               As String                                                                                                                      
-24-12-19-16:07:55                   .................:  Code change: Line 0121 Public (Export-File)....: Private TraceStack          As Collection       ' Trace stack for the trace log written to a file                                                          
-24-12-19-16:07:57  Class-Module     clsLog...........:  Code change: Line 0871 Serviced (CodeModule)...: Private Function ColMarginsAdded(ByVal c_col As Long, _                                                                                                    
-24-12-19-16:07:57                   .................:  Code change: Line 0871 Public (Export-File)....: Private Function ColsHeadersLines(ByRef c_width As Long) As String                                                                                         
-24-12-19-16:07:59  Class-Module     clsTestAid.......:  Serviced Common Component used is up-to-date                                                                                                                                                                
-24-12-19-16:08:19  Standard-Module  mErH.............:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:08:41  Standard-Module  mMsg.............:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:08:59  Standard-Module  mCompManClient...:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:09:06  Class-Module     clsPrivProf......:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:09:11  Standard-Module  mTrc.............:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:09:16  Class-Module     clsLog...........:  Serviced Common Component updated by re-import of the public Export-File from the Common-Components folder.                                                                                                 
-24-12-19-16:32:12 ===================================================================================================
-24-12-19-16:32:12 ------------------ Export Changed Components (by CompMan.xlsb) for PrivProf.xlsb ------------------
-24-12-19-16:32:12 ---------------------------------------------------------------------------------------------------
-24-12-19-16:32:12  Class-Module     clsLog...........:  Serviced Common Component properties housekeeping:           
-24-12-19-16:32:12                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public 
-24-12-19-16:32:12  Class-Module     clsTestAid.......:  Serviced Common Component properties housekeeping:                                
-24-12-19-16:32:12                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public 
-24-12-19-16:32:13  Standard-Module  mCompManClient...:  Serviced Common Component properties housekeeping:                                
-24-12-19-16:32:13                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public 
-24-12-19-16:32:13  Standard-Module  mErH.............:  Serviced Common Component properties housekeeping:                                
-24-12-19-16:32:13                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public 
-24-12-19-16:32:13  Standard-Module  mMsg.............:  Serviced Common Component properties housekeeping:                                
-24-12-19-16:32:13                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public 
-24-12-19-16:32:13  Standard-Module  mTrc.............:  Serviced Common Component properties housekeeping:                                
-24-12-19-16:32:13                   .................:  Serviced Common Component's Export-File meets public: Properties set equal public 
-24-12-19-16:32:14  Standard-Module  mPrivProfTest....:  Modified VBComponent e x p o r t e d !                                            
-24-12-19-16:32:14  Class-Module     clsPrivProf......:  Common Component code change:                                                     
-24-12-19-16:32:14                   .................:  Line 0079 Serviced (CodeModule)....: ' Values          Writes a series of values to the current specified Private 
-24-12-19-16:32:14                   .................:  Line 0079 Serviced (Export-File)...: '                                                                            
-24-12-19-16:32:15                   .................:  Modified Common Component: Release registered pending                                                             
-24-12-19-16:32:15                   .................:  Serviced Common Component modified: E x p o r t e d !                                                             
-24-12-19-16:32:15                   .................:  Serviced Common Component modified: Properties in CommComps.dat updated                                           
-24-12-19-16:32:15                   .................:  Serviced Common Component modified: Registered pending release                                                    
-24-12-19-16:32:15  UserForm         fMsg.............:  Common Component code change:                                                                                     
-24-12-19-16:32:15                   .................:  Line 0036 Serviced (CodeModule)....: Private Const DFLT_BTTN_MIN_HEIGHT          As Single = 30              ' Default minimum reply button height 
-24-12-19-16:32:15                   .................:  Line 0036 Serviced (Export-File)...: Private Const DFLT_TXT_MONOSPACED_FONT_NAME As String = "Courier New"   ' Default monospaced Font name        
-24-12-19-16:32:42 ===================================================================================================
-24-12-19-16:32:42 -------------- Update Outdated Common Components (by CompMan.xlsb) for PrivProf.xlsb --------------
-24-12-19-16:32:42 ---------------------------------------------------------------------------------------------------
-24-12-19-16:32:42  Class-Module     clsTestAid.......:  Serviced Common Component used is up-to-date                 
-24-12-19-16:32:42  Standard-Module  mErH.............:  Serviced Common Component used is up-to-date                 
-24-12-19-16:32:42  Standard-Module  mMsg.............:  Serviced Common Component used is up-to-date                 
-24-12-19-16:32:42  Standard-Module  mCompManClient...:  Serviced Common Component used is up-to-date                 
-24-12-19-16:32:42  Standard-Module  mTrc.............:  Serviced Common Component used is up-to-date                 
-24-12-19-16:32:43  Class-Module     clsLog...........:  Serviced Common Component used is up-to-date                 
-24-12-19-16:32:43  UserForm         fMsg.............:  Serviced Common Component used is up-to-date                 
+24-12-28-17:47:45 --------------------- Export Changed Components (by Add-in) for PrivProf.xlsb ---------------------
+24-12-28-17:47:45 ---------------------------------------------------------------------------------------------------
+24-12-28-17:47:45  Class-Module     clsTestAid.......:  Common Component code change:                                
+24-12-28-17:47:45                                       Line 2863 Serviced (CodeModule)....:     Const PROC = "VarsDiffer" 
+24-12-28-17:47:45                                       Line 2863 Serviced (Export-File)...:     Dim sResult             As String 
+24-12-28-17:47:45                                       Modified Common Component: Release registered pending                      
+24-12-28-17:47:45                                       Serviced Common Component modified: E x p o r t e d !                      
+24-12-28-17:47:45                                       Serviced Common Component modified: Re-registered pending release          
+24-12-28-17:47:46  Standard-Module  mPrivProfTest....:  Modified VBComponent e x p o r t e d !                                     
+24-12-28-17:53:10 ===================================================================================================
+24-12-28-17:53:10 --------------------- Export Changed Components (by Add-in) for PrivProf.xlsb ---------------------
+24-12-28-17:53:10 ---------------------------------------------------------------------------------------------------
+24-12-28-17:53:10  Class-Module     clsTestAid.......:  Common Component code change:                                
+24-12-28-17:53:10                                       Line 2858 Serviced (CodeModule)....: Private Function VarsDiffer(Optional ByVal v_result As Variant, _ 
+24-12-28-17:53:10                                       Line 2858 Serviced (Export-File)...: Private Function VarsDiffer(ByVal v_result As Variant, _          
+24-12-28-17:53:11                                       Modified Common Component: Release registered pending                                                  
+24-12-28-17:53:11                                       Serviced Common Component modified: E x p o r t e d !                                                  
+24-12-28-17:53:11                                       Serviced Common Component modified: Re-registered pending release                                      
+24-12-28-18:04:34 ===================================================================================================
+24-12-28-18:04:34 --------------------- Export Changed Components (by Add-in) for PrivProf.xlsb ---------------------
+24-12-28-18:04:34 ---------------------------------------------------------------------------------------------------
+24-12-28-18:04:34  Class-Module     clsTestAid.......:  Common Component code change:                                
+24-12-28-18:04:34                                       Line 0176 Serviced (CodeModule)....: 'Private dctResult                   As New Dictionary 
+24-12-28-18:04:34                                       Line 0176 Serviced (Export-File)...: Private dctResult                   As New Dictionary  
+24-12-28-18:04:35                                       Modified Common Component: Release registered pending                                       
+24-12-28-18:04:35                                       Serviced Common Component modified: E x p o r t e d !                                       
+24-12-28-18:04:35                                       Serviced Common Component modified: Re-registered pending release                           
+24-12-28-18:11:00 ===================================================================================================
+24-12-28-18:11:00 --------------------- Export Changed Components (by Add-in) for PrivProf.xlsb ---------------------
+24-12-28-18:11:00 ---------------------------------------------------------------------------------------------------
+24-12-28-18:11:00  Class-Module     clsTestAid.......:  Common Component code change:                                
+24-12-28-18:11:00                                       Line 2870 Serviced (CodeModule)....:             Case TypeName(v_result) = TypeName(v_result_expected) 
+24-12-28-18:11:00                                       Line 2870 Serviced (Export-File)...:             Case Else                                             
+24-12-28-18:11:00                                       Modified Common Component: Release registered pending                                                  
+24-12-28-18:11:01                                       Serviced Common Component modified: E x p o r t e d !                                                  
+24-12-28-18:11:01                                       Serviced Common Component modified: Re-registered pending release                                      
+24-12-28-19:14:40 ===================================================================================================
+24-12-28-19:14:40 --------------------- Export Changed Components (by Add-in) for PrivProf.xlsb ---------------------
+24-12-28-19:14:40 ---------------------------------------------------------------------------------------------------
+24-12-28-19:14:40  Class-Module     clsTestAid.......:  Common Component code change:                                
+24-12-28-19:14:40                                       Line 0263 Serviced (CodeModule)....:     Dim aInvalidChars   As Variant 
+24-12-28-19:14:40                                       Line 0263 Serviced (Export-File)...:     Dim aInvalidChars   As String  
+24-12-28-19:14:41                                       Modified Common Component: Release registered pending                   
+24-12-28-19:14:41                                       Serviced Common Component modified: E x p o r t e d !                   
+24-12-28-19:14:41                                       Serviced Common Component modified: Properties in CommComps.dat updated 
+24-12-28-19:14:41                                       Serviced Common Component modified: Registered pending release          
+24-12-28-19:14:41  Standard-Module  mPrivProfTest....:  Modified VBComponent e x p o r t e d !                                  
+24-12-28-19:14:41  Class-Module     clsPrivProfTests.:  Modified VBComponent e x p o r t e d !                                  

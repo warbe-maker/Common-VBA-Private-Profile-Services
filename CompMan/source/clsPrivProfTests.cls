@@ -54,7 +54,6 @@ Private Sub Class_Initialize()
     
     '~~ Test folder
     If TestAid Is Nothing Then Set TestAid = New clsTestAid
-    TestAid.TestedComp = "clsPrivProf"
     sFolder = TestAid.TestFolder
     Set cllTestFiles = New Collection
     
@@ -95,22 +94,6 @@ End Sub
 
 Private Function ErrSrc(ByVal sProc As String) As String
     ErrSrc = "mTest." & sProc
-End Function
-
-Public Function ExpectedTestResultFile(ByVal e_test_no As String, _
-                              Optional ByVal e_test_folder As String = vbNullString) As File
-    
-    If e_test_folder = vbNullString Then e_test_folder = TestAid.TestFolder
-    Set ExpectedTestResultFile = FSo.GetFile(ExpectedTestResultFileName(e_test_no, e_test_folder))
-     
-End Function
-
-Public Function ExpectedTestResultFileName(ByVal e_test_no As String, _
-                                  Optional ByVal e_test_folder As String = vbNullString) As String
-                                  
-    If e_test_folder = vbNullString Then e_test_folder = TestAid.TestFolder
-    ExpectedTestResultFileName = e_test_folder & "\ResultExpected-" & e_test_no & ".dat"
-
 End Function
 
 Private Function FileAsString(Optional ByVal f_file_full_name As String, _
@@ -198,15 +181,16 @@ Private Function FileStringTrimmed(ByVal s_s As String, _
 End Function
 
 Public Function ProvideTestPrivProf(ByVal p_no As Long, _
-                           Optional ByVal t_sections As Long = NO_OF_TEST_SECTIONS, _
-                           Optional ByVal t_values As Long = NO_OF_TEST_VALUE_NAMES, _
-                           Optional ByVal t_individual_names As Boolean = True) As String
+                                    ByVal p_test_file_full_name As String, _
+                           Optional ByVal p_sections As Long = NO_OF_TEST_SECTIONS, _
+                           Optional ByVal p_values As Long = NO_OF_TEST_VALUE_NAMES, _
+                           Optional ByVal p_individual_names As Boolean = True) As String
 ' ----------------------------------------------------------------------------
-' Returns the name of a temporary file with n (t_sections) sections, each
-' with m (t_values) values all in descending order. Each test file's name is
+' Returns the name of a temporary file with n (p_sections) sections, each
+' with m (p_values) values all in descending order. Each test file's name is
 ' saved to a Collection (cllTestFiles) allowing to delete them all at the end
 ' of the test.
-' When t_individual_names is FALSE all sections have the same set of value
+' When p_individual_names is FALSE all sections have the same set of value
 ' names.
 ' ----------------------------------------------------------------------------
     Const PROC = "ProvideTestPrivProf"
@@ -221,31 +205,34 @@ Public Function ProvideTestPrivProf(ByVal p_no As Long, _
     If Not FSo.FolderExists(sFolder) Then FSo.CreateFolder (sFolder)
     
     Select Case p_no
-        Case 0 ' provide  none, a name only
-            sPrivProfFileFullName = sFolder & "\" & FSo.GetBaseName(ThisWorkbook.Name) & "1.dat"
-            If FSo.FileExists(sPrivProfFileFullName) Then FSo.DeleteFile sPrivProfFileFullName
+        Case 0
+            '~~ Provide  none, a name only
+            If FSo.FileExists(p_test_file_full_name) Then FSo.DeleteFile p_test_file_full_name
+        
         Case 1
-            sPrivProfFileFullName = sFolder & "\" & FSo.GetBaseName(ThisWorkbook.Name) & "1.dat"
-            If FSo.FileExists(sPrivProfFileFullName) Then FSo.DeleteFile sPrivProfFileFullName
+            '~~ Provide a test file
+            If FSo.FileExists(p_test_file_full_name) Then FSo.DeleteFile p_test_file_full_name
             
-            For i = t_sections To 1 Step -2
+            For i = p_sections To 1 Step -2
                 ArrayAdd arr, "[" & SectionName(i) & "]"
-                For j = t_values To 1 Step -2
-                    If t_individual_names _
+                For j = p_values To 1 Step -2
+                    If p_individual_names _
                     Then ArrayAdd arr, ValueName(i, j) & "=" & ValueString(i, j) _
                     Else ArrayAdd arr, ValueName(, j) & "=" & ValueString(i, j)
                 Next j
             Next i
-            StringAsFile Join(arr, vbCrLf), sPrivProfFileFullName
+            StringAsFile Join(arr, vbCrLf), p_test_file_full_name
             If cllTestFiles Is Nothing Then Set cllTestFiles = New Collection
 '            cllTestFiles.Add sPrivProfFileFullName
-            ProvideTestPrivProf = sPrivProfFileFullName
+            ProvideTestPrivProf = p_test_file_full_name
+        
         Case 2
-            '~~ This second Private Profile test file is kept as ...bkp and copied for being used
-            sPrivProfFileFullName = sFolder & "\" & FSo.GetBaseName(ThisWorkbook.Name) & "2.dat"
-            FSo.CopyFile sFolder & "\" & FSo.GetBaseName(ThisWorkbook.Name) & "2.bkp", _
-                         sPrivProfFileFullName, True
-            ProvideTestPrivProf = sPrivProfFileFullName
+            '~~ A backup Private Profile file is copied for being used
+            FSo.CopyFile sFolder & "\" & FSo.GetBaseName(ThisWorkbook.name) & ".bkp", _
+                         p_test_file_full_name, True
+            ProvideTestPrivProf = p_test_file_full_name
+        Case 3
+            '~~ Use/return existing test file
     End Select
     
 xt: Exit Function

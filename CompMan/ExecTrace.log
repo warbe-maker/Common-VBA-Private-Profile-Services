@@ -1,9 +1,153 @@
-24-12-19 16:32:52 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
-24-12-19 16:32:52 seconds seconds >> Update Outdated Common Components (by CompMan.xlsb) for PrivProf.xlsb
-24-12-19 16:32:52 00,0000         |  >> mCompMan.ServiceInitiate
-24-12-19 16:32:52 00,0065         |  |  >> clsServiced.MaxLengths
-24-12-19 16:32:53 00,3486 00,3421 |  |  << clsServiced.MaxLengths
-24-12-19 16:32:53 00,3530 00,3530 |  << mCompMan.ServiceInitiate
-24-12-19 16:32:53 00,3530 00,3530 << Update Outdated Common Components (by CompMan.xlsb) for PrivProf.xlsb
-24-12-19 16:32:53                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
-24-12-19 16:32:53                 Impact on the overall performance (caused by the trace itself): 0,5 milliseconds!
+24-12-28 17:53:04 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 17:53:04 seconds seconds >> Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 17:53:04 00,0000         |  >> mCompMan.ExportChangedComponents
+24-12-28 17:53:04 00,0009         |  |  >> mCompMan.ServiceInitiate
+24-12-28 17:53:04 00,0049         |  |  |  >> clsServiced.MaxLengths
+24-12-28 17:53:04 00,0057 00,0008 |  |  |  << clsServiced.MaxLengths
+24-12-28 17:53:04 00,0153         |  |  |  >> mHskpng.FocusOnSave
+24-12-28 17:53:04 00,0833         |  |  |  |  >> mHskpng.CommCompsPublicObsolete
+24-12-28 17:53:04 00,1376 00,0543 |  |  |  |  << mHskpng.CommCompsPublicObsolete
+24-12-28 17:53:04 00,1381         |  |  |  |  >> mHskpng.CommCompsPublicNew
+24-12-28 17:53:04 00,3721 00,2340 |  |  |  |  << mHskpng.CommCompsPublicNew
+24-12-28 17:53:04 00,3735         |  |  |  |  >> mHskpng.CommCompsServicedHosted
+24-12-28 17:53:04 00,4133 00,0398 |  |  |  |  << mHskpng.CommCompsServicedHosted
+24-12-28 17:53:04 00,4141         |  |  |  |  >> mHskpng.CommCompsServicedNotHosted
+24-12-28 17:53:05 00,6710 00,2568 |  |  |  |  << mHskpng.CommCompsServicedNotHosted
+24-12-28 17:53:05 00,6715         |  |  |  |  >> mHskpng.CommCompsServicedKindOf
+24-12-28 17:53:05 00,7270 00,0555 |  |  |  |  << mHskpng.CommCompsServicedKindOf
+24-12-28 17:53:05 00,7275         |  |  |  |  >> mHskpng.CommCompsServicedObsolete
+24-12-28 17:53:05 01,1658 00,4384 |  |  |  |  << mHskpng.CommCompsServicedObsolete
+24-12-28 17:53:05 01,1665         |  |  |  |  >> mHskpng.CommCompsServicedPendingRelease
+24-12-28 17:53:06 02,1400 00,9735 |  |  |  |  << mHskpng.CommCompsServicedPendingRelease
+24-12-28 17:53:06 02,1523         |  |  |  |  >> mHskpng.CommCompsServicedProperties
+24-12-28 17:53:08 04,4389 02,2866 |  |  |  |  << mHskpng.CommCompsServicedProperties
+24-12-28 17:53:08 04,4394 04,4240 |  |  |  << mHskpng.FocusOnSave
+24-12-28 17:53:08 04,4397 04,4388 |  |  << mCompMan.ServiceInitiate
+24-12-28 17:53:09 04,8901         |  |  >> clsServicing.ExportChangedComponents
+24-12-28 17:53:09 04,8904         |  |  |  >> mExport.ChangedComponents
+24-12-28 17:53:12 08,4386         |  |  |  |  >> mHskpng.RemoveServiceRemains
+24-12-28 17:53:12 08,4394 00,0008 |  |  |  |  << mHskpng.RemoveServiceRemains
+24-12-28 17:53:12 08,5082 03,6178 |  |  |  << mExport.ChangedComponents
+24-12-28 17:53:12 08,5092 03,6192 |  |  << clsServicing.ExportChangedComponents
+24-12-28 17:53:12 08,5105 08,5105 |  << mCompMan.ExportChangedComponents
+24-12-28 17:53:12 08,5105 08,5105 << Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 17:53:12                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 17:53:12                 Impact on the overall performance (caused by the trace itself): 1,2 milliseconds!
+===========================================================================================================================================
+24-12-28 18:04:28 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 18:04:28 seconds seconds >> Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 18:04:28 00,0000         |  >> mCompMan.ExportChangedComponents
+24-12-28 18:04:28 00,0008         |  |  >> mCompMan.ServiceInitiate
+24-12-28 18:04:28 00,0036         |  |  |  >> clsServiced.MaxLengths
+24-12-28 18:04:28 00,0042 00,0006 |  |  |  << clsServiced.MaxLengths
+24-12-28 18:04:28 00,0051         |  |  |  >> mHskpng.FocusOnSave
+24-12-28 18:04:28 00,0828         |  |  |  |  >> mHskpng.CommCompsPublicObsolete
+24-12-28 18:04:28 00,1316 00,0488 |  |  |  |  << mHskpng.CommCompsPublicObsolete
+24-12-28 18:04:28 00,1323         |  |  |  |  >> mHskpng.CommCompsPublicNew
+24-12-28 18:04:28 00,4507 00,3184 |  |  |  |  << mHskpng.CommCompsPublicNew
+24-12-28 18:04:28 00,4513         |  |  |  |  >> mHskpng.CommCompsServicedHosted
+24-12-28 18:04:29 00,4824 00,0311 |  |  |  |  << mHskpng.CommCompsServicedHosted
+24-12-28 18:04:29 00,4830         |  |  |  |  >> mHskpng.CommCompsServicedNotHosted
+24-12-28 18:04:29 00,7735 00,2905 |  |  |  |  << mHskpng.CommCompsServicedNotHosted
+24-12-28 18:04:29 00,7740         |  |  |  |  >> mHskpng.CommCompsServicedKindOf
+24-12-28 18:04:29 00,8276 00,0536 |  |  |  |  << mHskpng.CommCompsServicedKindOf
+24-12-28 18:04:29 00,8280         |  |  |  |  >> mHskpng.CommCompsServicedObsolete
+24-12-28 18:04:29 01,2391 00,4111 |  |  |  |  << mHskpng.CommCompsServicedObsolete
+24-12-28 18:04:29 01,2396         |  |  |  |  >> mHskpng.CommCompsServicedPendingRelease
+24-12-28 18:04:30 02,2031 00,9635 |  |  |  |  << mHskpng.CommCompsServicedPendingRelease
+24-12-28 18:04:30 02,2083         |  |  |  |  >> mHskpng.CommCompsServicedProperties
+24-12-28 18:04:33 04,4672 02,2589 |  |  |  |  << mHskpng.CommCompsServicedProperties
+24-12-28 18:04:33 04,4675 04,4625 |  |  |  << mHskpng.FocusOnSave
+24-12-28 18:04:33 04,4678 04,4669 |  |  << mCompMan.ServiceInitiate
+24-12-28 18:04:33 04,9090         |  |  >> clsServicing.ExportChangedComponents
+24-12-28 18:04:33 04,9110         |  |  |  >> mExport.ChangedComponents
+24-12-28 18:04:36 08,3732         |  |  |  |  >> mHskpng.RemoveServiceRemains
+24-12-28 18:04:36 08,3738 00,0006 |  |  |  |  << mHskpng.RemoveServiceRemains
+24-12-28 18:04:36 08,4359 03,5248 |  |  |  << mExport.ChangedComponents
+24-12-28 18:04:36 08,4364 03,5274 |  |  << clsServicing.ExportChangedComponents
+24-12-28 18:04:36 08,4367 08,4367 |  << mCompMan.ExportChangedComponents
+24-12-28 18:04:36 08,4367 08,4367 << Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 18:04:36                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 18:04:36                 Impact on the overall performance (caused by the trace itself): 0,3 milliseconds!
+===========================================================================================================================================
+24-12-28 18:10:53 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 18:10:53 seconds seconds >> Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 18:10:53 00,0000         |  >> mCompMan.ExportChangedComponents
+24-12-28 18:10:53 00,0009         |  |  >> mCompMan.ServiceInitiate
+24-12-28 18:10:53 00,0058         |  |  |  >> clsServiced.MaxLengths
+24-12-28 18:10:53 00,0077 00,0019 |  |  |  << clsServiced.MaxLengths
+24-12-28 18:10:53 00,0144         |  |  |  >> mHskpng.FocusOnSave
+24-12-28 18:10:54 00,0970         |  |  |  |  >> mHskpng.CommCompsPublicObsolete
+24-12-28 18:10:54 00,1482 00,0512 |  |  |  |  << mHskpng.CommCompsPublicObsolete
+24-12-28 18:10:54 00,1489         |  |  |  |  >> mHskpng.CommCompsPublicNew
+24-12-28 18:10:54 00,4142 00,2653 |  |  |  |  << mHskpng.CommCompsPublicNew
+24-12-28 18:10:54 00,4151         |  |  |  |  >> mHskpng.CommCompsServicedHosted
+24-12-28 18:10:54 00,4541 00,0390 |  |  |  |  << mHskpng.CommCompsServicedHosted
+24-12-28 18:10:54 00,4546         |  |  |  |  >> mHskpng.CommCompsServicedNotHosted
+24-12-28 18:10:54 00,7394 00,2848 |  |  |  |  << mHskpng.CommCompsServicedNotHosted
+24-12-28 18:10:54 00,7399         |  |  |  |  >> mHskpng.CommCompsServicedKindOf
+24-12-28 18:10:54 00,7897 00,0498 |  |  |  |  << mHskpng.CommCompsServicedKindOf
+24-12-28 18:10:54 00,7922         |  |  |  |  >> mHskpng.CommCompsServicedObsolete
+24-12-28 18:10:55 01,2302 00,4379 |  |  |  |  << mHskpng.CommCompsServicedObsolete
+24-12-28 18:10:55 01,2308         |  |  |  |  >> mHskpng.CommCompsServicedPendingRelease
+24-12-28 18:10:56 02,2459 01,0151 |  |  |  |  << mHskpng.CommCompsServicedPendingRelease
+24-12-28 18:10:56 02,2490         |  |  |  |  >> mHskpng.CommCompsServicedProperties
+24-12-28 18:10:58 04,6152 02,3662 |  |  |  |  << mHskpng.CommCompsServicedProperties
+24-12-28 18:10:58 04,6157 04,6014 |  |  |  << mHskpng.FocusOnSave
+24-12-28 18:10:58 04,6162 04,6152 |  |  << mCompMan.ServiceInitiate
+24-12-28 18:10:59 05,1165         |  |  >> clsServicing.ExportChangedComponents
+24-12-28 18:10:59 05,1173         |  |  |  >> mExport.ChangedComponents
+24-12-28 18:11:02 08,5732         |  |  |  |  >> mHskpng.RemoveServiceRemains
+24-12-28 18:11:02 08,5756 00,0023 |  |  |  |  << mHskpng.RemoveServiceRemains
+24-12-28 18:11:02 08,6382 03,5209 |  |  |  << mExport.ChangedComponents
+24-12-28 18:11:02 08,6386 03,5221 |  |  << clsServicing.ExportChangedComponents
+24-12-28 18:11:02 08,6389 08,6389 |  << mCompMan.ExportChangedComponents
+24-12-28 18:11:02 08,6389 08,6389 << Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 18:11:02                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 18:11:02                 Impact on the overall performance (caused by the trace itself): 0,3 milliseconds!
+===========================================================================================================================================
+24-12-28 19:13:44 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 19:13:44 seconds seconds >> Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 19:13:44 00,0000         |  >> mCompMan.ServiceInitiate
+24-12-28 19:13:44 00,0022         |  |  >> clsServiced.MaxLengths
+24-12-28 19:13:44 00,0026 00,0004 |  |  << clsServiced.MaxLengths
+24-12-28 19:13:44 00,0032 00,0032 |  << mCompMan.ServiceInitiate
+24-12-28 19:13:44 00,0032 00,0032 << Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 19:13:44                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 19:13:44                 Impact on the overall performance (caused by the trace itself): 0,2 milliseconds!
+===========================================================================================================================================
+24-12-28 19:14:38 Elapsed Length  Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 19:14:38 seconds seconds >> Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 19:14:38 00,0000         |  >> mCompMan.ExportChangedComponents
+24-12-28 19:14:38 00,0005         |  |  >> mCompMan.ServiceInitiate
+24-12-28 19:14:38 00,0059         |  |  |  >> clsServiced.MaxLengths
+24-12-28 19:14:38 00,0065 00,0005 |  |  |  << clsServiced.MaxLengths
+24-12-28 19:14:38 00,0071         |  |  |  >> mHskpng.FocusOnSave
+24-12-28 19:14:38 00,0539         |  |  |  |  >> mHskpng.CommCompsPublicObsolete
+24-12-28 19:14:38 00,0728 00,0188 |  |  |  |  << mHskpng.CommCompsPublicObsolete
+24-12-28 19:14:38 00,0731         |  |  |  |  >> mHskpng.CommCompsPublicNew
+24-12-28 19:14:38 00,1596 00,0865 |  |  |  |  << mHskpng.CommCompsPublicNew
+24-12-28 19:14:38 00,1599         |  |  |  |  >> mHskpng.CommCompsServicedHosted
+24-12-28 19:14:38 00,1700 00,0101 |  |  |  |  << mHskpng.CommCompsServicedHosted
+24-12-28 19:14:38 00,1703         |  |  |  |  >> mHskpng.CommCompsServicedNotHosted
+24-12-28 19:14:39 00,2497 00,0795 |  |  |  |  << mHskpng.CommCompsServicedNotHosted
+24-12-28 19:14:39 00,2502         |  |  |  |  >> mHskpng.CommCompsServicedKindOf
+24-12-28 19:14:39 00,2712 00,0210 |  |  |  |  << mHskpng.CommCompsServicedKindOf
+24-12-28 19:14:39 00,2718         |  |  |  |  >> mHskpng.CommCompsServicedObsolete
+24-12-28 19:14:39 00,4461 00,1743 |  |  |  |  << mHskpng.CommCompsServicedObsolete
+24-12-28 19:14:39 00,4466         |  |  |  |  >> mHskpng.CommCompsServicedPendingRelease
+24-12-28 19:14:39 00,7196 00,2729 |  |  |  |  << mHskpng.CommCompsServicedPendingRelease
+24-12-28 19:14:39 00,7227         |  |  |  |  >> mHskpng.CommCompsServicedProperties
+24-12-28 19:14:40 01,6420 00,9193 |  |  |  |  << mHskpng.CommCompsServicedProperties
+24-12-28 19:14:40 01,6423 01,6353 |  |  |  << mHskpng.FocusOnSave
+24-12-28 19:14:40 01,6426 01,6421 |  |  << mCompMan.ServiceInitiate
+24-12-28 19:14:40 01,7542         |  |  >> clsServicing.ExportChangedComponents
+24-12-28 19:14:40 01,7545         |  |  |  >> mExport.ChangedComponents
+24-12-28 19:14:41 02,8571         |  |  |  |  >> mHskpng.RemoveServiceRemains
+24-12-28 19:14:41 02,8574 00,0004 |  |  |  |  << mHskpng.RemoveServiceRemains
+24-12-28 19:14:41 02,8651 01,1106 |  |  |  << mExport.ChangedComponents
+24-12-28 19:14:41 02,8654 01,1112 |  |  << clsServicing.ExportChangedComponents
+24-12-28 19:14:41 02,8657 02,8657 |  << mCompMan.ExportChangedComponents
+24-12-28 19:14:41 02,8657 02,8657 << Export Changed Components (by Add-in) for PrivProf.xlsb
+24-12-28 19:14:41                 Execution trace by 'Common VBA Execution Trace Service (mTrc)' (https://github.com/warbe-maker/VBA-Trace)
+24-12-28 19:14:41                 Impact on the overall performance (caused by the trace itself): 0,2 milliseconds!

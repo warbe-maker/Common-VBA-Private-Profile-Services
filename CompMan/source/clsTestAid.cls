@@ -41,13 +41,14 @@ Option Base 1
 ' FolderZip                   Zips a folder into a zip file.
 ' Guide                       Non modal message popup providing testing
 '                             guidance.
-' Instructions          M     Displays instructions for a required interaction
-'                             by the "tester". When the _Common VBA Message
-'                             Component_ `mMsg`/`fMsg` is installed (indicated
-'                             by the Cond. Comp. Arg. `mMsg = 1`) the
-'                             mMsg.Dsply service is used to display the
-'                             instructions non-modal, else the instructions
-'                             are provided in the Application.StatusBar.
+' Instructions          M     Displays instructions for a required
+'                             interaction by the "tester". When the
+'                             _Common VBA Message Component_ `mMsg`/`fMsg`
+'                             is installed (indicated by the Cond. Comp.
+'                             Arg. `mMsg = 1`) the mMsg.Dsply service is
+'                             used to display the instructions non-modal,
+'                             else the instructions are provided in the
+'                             Application.StatusBar.
 ' InstructionsDone      M     Unload the displayed instructions if any.
 '                             Note: The form window is identified via the
 '                             displayed title which is the key to the
@@ -55,8 +56,8 @@ Option Base 1
 ' InstructionsPosLeft   P r/w Popup message position
 ' InstructionsPosTop    P r/w Popup message position
 ' ModeRegression        P r/w Boolean expression, indicates regression mode.
-'                             When True, a failed test result is not displayed
-'                             but displayed as summary (ResultSummaryLog).
+'                             When True, a failed test result is not
+'                             displayed but displayed as summary result).
 ' ResultSummaryLog      M     Displays a RegressionTest.log file provided
 '                             ModeRegression = True.
 ' Result                P r/w Variant expression registers/returns the result
@@ -71,17 +72,19 @@ Option Base 1
 '                             procedure.
 ' TestedProc            P   w The name of the tested procedure (a Sub,
 '                             Function, Property, or Method).
-' TestedProcType            P   w Tested procedure type (Sub, Function, ...)
+' TestedProcType        P   w Tested procedure type (Sub, Function, ...)
 ' TestFolder            P r/w String expression, specifies the test folder
 ' TestFile              M     Returns the file object with the
 '                             TestFileFullName, raises an erro when not
 '                             existing.
 ' TestFileFullName            Returns a test file's full name based on the
-'                             current `TestId`
-' TestId            P   w     Essential, obligatory, distinct identifcation of
-'                             a test, provided as the very first Property for
-'                             each ResultExpected/Result pair
-'                             respectively.
+'                             current `TestId` and the specifies name scheme
+'                             which defaults to "Test-<id>-<vn>-<nm>.<xt>".
+' TestFileNameScheme    P   w
+' TestId                P   w Obligatory, distinct identifcation of a test,
+'                             provided as the very first Property for one
+'                             or more verifications (ResultExpected/Result
+'                             pairs).
 ' TempFileFullName      M
 ' TempTestItem          P r/w Saves the name of a temporary test file in a
 '                             Collection for being removed when the class
@@ -100,9 +103,6 @@ Option Base 1
 '                             and verifications in it.
 ' Verification          P   w A string describing what specifically is verified
 '                             by the tests ResultExpected/Result.
-' BoTP/EoTP             M     Effective only when the execution trace module
-'                             (mTrc or clsTrc) is installed, indicates the
-'                             begin/end of a procedure.
 '
 ' Requires:  Reference to "Microsoft Scripting Runtime"
 '
@@ -125,6 +125,11 @@ Public FSo                  As New FileSystemObject
 
 Private Const RESULT_PASSED As String = " Passed "
 Private Const RESULT_FAILED As String = " F a i l e d ! "
+Private Const SCHEME_ID     As String = "<id>"
+Private Const SCHEME_NAME   As String = "<nm>"
+Private Const SCHEME_VER_NO As String = "<vn>"
+Private Const SCHEME_EXT    As String = "<xt>"
+
 
 #If Win64 Or VBA7 Then
     Private Declare PtrSafe Function apiShellExecute Lib "shell32.dll" _
@@ -175,14 +180,16 @@ Private aLogColFills                As Variant
 Private aLogColsArrangedHeaders     As Variant
 Private aLogColWidths               As Variant
 Private bModeRegression             As Boolean
+Private bResult                     As Boolean
+Private bResultExpected             As Boolean
 Private cExecTimeMsecs              As Currency
 Private cFrequency                  As Currency
 Private cllTempTestItems            As Collection
 Private cTicksCurrent               As Currency
 Private cTicksStart                 As Currency
 Private cTimerOverhead              As Currency
-Private dctResult                   As New Dictionary
-Private dctResultExpected           As New Dictionary
+'Private dctResult                   As New Dictionary
+'Private dctResultExpected           As New Dictionary
 Private dctTestSummary              As New Dictionary
 Private lCols                       As Long
 Private lVerificationNumber         As Long
@@ -204,7 +211,10 @@ Private sTitle                      As String
 Private sTitleRegression            As String
 Private sTestId                     As String
 Private sVerification               As String
+Private sTestFileNameScheme         As String
 Private v                           As Variant
+Private vResult                     As Variant
+Private vResultExpected             As Variant
 Private vTempTestItem               As Variant
 Private siInstructionsPosLeft       As Single
 Private siInstructionsPosTop        As Single
@@ -234,9 +244,9 @@ Private Sub Class_Initialize()
     Dim cTicksAtStart   As Currency
     
     Set cllTempTestItems = New Collection
+    sTestFileNameScheme = "Test-<id>-<vn>-<nm>.<xt>"                     ' default tes file name scheme
     TestFolder = ThisWorkbook.Path & "\Test"                             ' default test folder
     TestResultSummaryLogFile = sTestFolder & "\Test-Result-Summary.log"  ' default regression test summary log file's full name
-    lVerificationNumber = 0
     
     ' ------------------------------------------------------------------------
     ' Provide the milliseconds the timer itself consumes when it not does nay
@@ -262,13 +272,46 @@ Private Sub Class_Initialize()
     
 End Sub
 
+Function IsValidFileName(ByVal i_string As String) As Boolean
+' ----------------------------------------------------------------------------
+' Returns TRUE when the string (i_string) is valid as a file name or valid as
+' part of a file name.
+' ----------------------------------------------------------------------------
+    
+    Dim aInvalidChars   As Variant
+    Dim aReservedNames  As Variant
+    Dim sName           As String
+    Dim v               As Variant
+    
+    IsValidFileName = True ' turned to False when invalid
+
+    '~~ Check for invalid characters
+    aInvalidChars = Array("\", "/", ":", "*", "?", """", "<", ">", "|")
+    For Each v In aInvalidChars
+        If InStr(i_string, v) <> 0 Then
+            IsValidFileName = False
+            GoTo xt
+        End If
+    Next v
+    
+    '~~ Check for reserved names
+    aReservedNames = Array("CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9")
+    sName = UCase(i_string)
+    For Each v In aReservedNames
+        If InStr(sName, v) <> 0 Then
+            IsValidFileName = False
+            GoTo xt
+        End If
+    Next v
+    
+xt: Exit Function
+End Function
+
 Private Sub Class_Terminate()
 
     Dim v As Variant
 
     Set dctTestSummary = Nothing
-    Set dctResult = Nothing
-    Set dctResultExpected = Nothing
     CleanUp
     Set cllTempTestItems = Nothing
 
@@ -283,6 +326,51 @@ Private Sub Class_Terminate()
     
 End Sub
 
+Public Property Let TestFileNameScheme(ByVal s_scheme As String)
+' ----------------------------------------------------------------------------
+' Determines the schem of test file names.
+' ----------------------------------------------------------------------------
+    Const PROC          As String = "TestFileNameScheme"
+    
+    Dim s As String
+    s = s_scheme
+    s = Replace(s, SCHEME_ID, vbNullString)
+    s = Replace(s, SCHEME_NAME, vbNullString)
+    s = Replace(s, SCHEME_VER_NO, vbNullString)
+    s = Replace(s, SCHEME_EXT, vbNullString)
+    s = Replace(s, "-", vbNullString)
+    s = Replace(s, ".", vbNullString)
+    If s <> "Test" Then _
+    Err.Raise AppErr(1), ErrSrc(PROC), "The provided test file name scheme is invalid! " & vbLf & _
+                                       "It contains other strings than ""<id>"", ""<nm>"", ""<vn>"", ""<xt>"", ""-"", and "".""."
+
+End Property
+
+Private Function TestFileName(ByVal t_id As String, _
+                              ByVal t_ver_no As Long, _
+                     Optional ByVal t_name As String = vbNullString, _
+                     Optional ByVal t_ext As String = vbNullString) As String
+' ----------------------------------------------------------------------------
+' Returns a test file's name based on the specified scheme which defaults to
+' "Test-<id>-<vn>-<nm>.<xt>".
+' ----------------------------------------------------------------------------
+    Dim s As String
+    
+    s = sTestFileNameScheme
+    s = Replace(s, SCHEME_ID, t_id)
+    
+    If t_ver_no = 0 Then t_ver_no = 1
+    s = Replace(s, SCHEME_VER_NO, t_ver_no)
+    
+    If t_name <> vbNullString _
+    Then s = Replace(s, SCHEME_NAME, t_name) _
+    Else s = Replace(s, "-" & SCHEME_NAME & "-", vbNullString)
+    If t_ext = vbNullString Then t_ext = TestFileExtension
+    s = Replace(s, SCHEME_EXT, t_ext)
+    s = Replace(Replace(s, "--", "-"), "..", ".")
+    TestFileName = s
+    
+End Function
 Private Property Get Arry(Optional ByRef c_arr As Variant, _
                           Optional ByVal c_index As Long = -1) As Variant
 ' ----------------------------------------------------------------------------
@@ -528,31 +616,21 @@ Friend Property Get Result() As Variant
 ' Returns the most current registered test result.
 ' ------------------------------------------------------------------------------
     
-    If VBA.IsObject(dctResult(VerificationId)) _
-    Then Set Result = dctResult(VerificationId) _
-    Else Result = dctResult(VerificationId)
+    If VBA.IsObject(vResult) _
+    Then Set Result = vResult _
+    Else Result = vResult
 
 End Property
 
 Friend Property Let Result(ByVal r_var As Variant)
 ' ------------------------------------------------------------------------------
-' Register in dctResult a new test result. When the corresponding expected
-' result has also already been registered, provide the final test result.
+' Registers a result in the dctResult Directory. An existing corresponding
+' result expected in the dctResultExpected Directory triggers the
+' ResultEvaluation.
 ' ------------------------------------------------------------------------------
-    Const PROC = "Result-Let"
-        
-    Select Case True
-        Case sVerification = vbNullString And sTitle = vbNullString
-            Err.Raise AppErr(1), ErrSrc(PROC), ErrorMsgMissingVerification
-        Case sVerification = vbNullString And sTitle <> vbNullString
-            sVerification = sTitle
-    End Select
-    With dctResult
-        If .Exists(VerificationId) Then .Remove VerificationId
-        .Add VerificationId, r_var
-    End With
-    
-    If dctResultExpected.Exists(VerificationId) Then ResultEvaluation
+    If VBA.IsObject(r_var) Then Set vResult = r_var Else vResult = r_var
+    bResult = True
+    If bResultExpected Then ResultEvaluation r_var, vResultExpected
     
 End Property
 
@@ -561,33 +639,21 @@ Friend Property Get ResultExpected() As Variant
 ' Returns the most current registered expected test result.
 ' ------------------------------------------------------------------------------
     
-    If VBA.IsObject(dctResultExpected(VerificationId)) _
-    Then Set ResultExpected = dctResultExpected(VerificationId) _
-    Else ResultExpected = dctResultExpected(VerificationId)
+    If VBA.IsObject(vResultExpected) _
+    Then Set ResultExpected = vResultExpected _
+    Else ResultExpected = vResultExpected
 
 End Property
 
 Friend Property Let ResultExpected(ByVal r_var As Variant)
 ' ------------------------------------------------------------------------------
-' Register in dctResultExpected a new expected test result. When the
-' corresponding test result has also already been registered, the final test
-' result is provided.
+' Registers an expected result in the dctResultExpected Directory. An existing
+' corresponding test result in the dctResult Directory triggers the
+' ResultEvaluation.
 ' ------------------------------------------------------------------------------
-    Const PROC = "ResultExpected-Let"
-    
-    Select Case True
-        Case sVerification = vbNullString And sTitle = vbNullString
-            Err.Raise AppErr(1), ErrSrc(PROC), ErrorMsgMissingVerification
-        Case sVerification = vbNullString And sTitle <> vbNullString
-            sVerification = sTitle
-    End Select
-    
-    With dctResultExpected
-        If .Exists(VerificationId) Then .Remove VerificationId
-        .Add VerificationId, r_var
-    End With
-    
-    If dctResult.Exists(VerificationId) Then ResultEvaluation
+    If VBA.IsObject(r_var) Then Set vResultExpected = r_var Else vResultExpected = r_var
+    bResultExpected = True
+    If bResult Then ResultEvaluation vResult, r_var
     
 End Property
 
@@ -665,17 +731,30 @@ Friend Property Get TestId() As String:                             TestId = sTe
 
 Friend Property Let TestId(ByVal s As String)
 ' ------------------------------------------------------------------------------
-' Essential, obligatory distinct identification of a test, provided as the very
+' Essential, obligatory, distinct identification of a test, provided as the very
 ' first Property for each test. Resets a previous test to prepare for a new one.
+' since the id is used in the test file's name it must be valid for being part
+' of it.
 ' ------------------------------------------------------------------------------
+    Const PROC = "TestId-Let"
     
     If sTestId <> s Then
+        
+        If Not IsValidFileName(s) _
+        Then Err.Raise AppErr(1), ErrSrc(PROC), _
+             "The provides id is not valid as (part of a) file name! || " & _
+             "The is used in test file's name (.TestFileName, TestResultFileName, TestResultExpectedFileName) " & _
+            "and thuis needs to be valid for becoming part of these names."
+        
         sTestId = s
-        dctResult.RemoveAll
-        dctResultExpected.RemoveAll
         vTempTestItem = vbNullString
-        lVerificationNumber = 0
+        lVerificationNumber = 1
         sVerification = vbNullString
+        TestFileNames
+        sResultEvaluated = RESULT_PASSED
+        bResult = False
+        bResultExpected = False
+        
     End If
     
 End Property
@@ -703,11 +782,24 @@ Friend Property Let Title(ByVal s As String):                       sTitle = s: 
 
 Friend Property Let TitleRegression(ByVal s As String):             sTitleRegression = s:                                       End Property
 
+Private Property Get Verification() As String
+    Const PROC = "Verification-Get"
+    
+    If sVerification = vbNullString And sTitle <> vbNullString Then sVerification = sTitle
+    If sVerification = vbNullString _
+    Then Err.Raise AppErr(1), ErrSrc(PROC), _
+         "Neither a .Verification not a .Title had been specified for the evaluation/comparison of a test result versus a result expected (test-id " & sTestId & ")." & "||" & _
+         "When it comes to a result evaluation a specified .Verification or alternatively a given .Title is obligatory."
+
+    Verification = sVerification
+    
+End Property
+
 Friend Property Let Verification(ByVal s As String)
 ' ----------------------------------------------------------------------------
-' Obligatory prior any .Result/.ResultExpected statements. However, when a
-' test identified by a u nique .TestId has only one .Result/.ResultExpected
-' for a missing Verification the Title is used alternatively - when it
+' Obligatory prior any ResultEvaluation. However, when a test identified by a
+' u nique .TestId has only one .Result/.ResultExpected a missing .Verification
+' is the Title is used alternatively - when it
 ' had been provided. When neither has been provided an error is raised. For
 ' any addidtional verification (.Result/.ResultExpected) the provision of a
 ' description (this property) is obligatory.
@@ -715,13 +807,19 @@ Friend Property Let Verification(ByVal s As String)
 ' ----------------------------------------------------------------------------
     
     sVerification = s
-    lVerificationNumber = lVerificationNumber + 1
-    sNameTestFile = sTestFolder & "\Test-" & sTestId & "-" & lVerificationNumber & sTestFileExtension
-    sNameTestResultFile = sTestFolder & "\Test-" & sTestId & "-Result-" & lVerificationNumber & sTestFileExtension
-    sNameTestResultExpectedFile = sTestFolder & "\Test-" & sTestId & "-Result-Expected-" & lVerificationNumber & sTestFileExtension
-
+    TestFileNames
+    lVerificationNumber = lVerificationNumber + 1 ' for a possible next verification within the same TestId
+    sResultEvaluated = RESULT_PASSED
+    bResultExpected = False
+    bResult = False
+    
 End Property
 
+Private Sub TestFileNames()
+    sNameTestFile = sTestFolder & "\" & TestFileName(sTestId, lVerificationNumber, , sTestFileExtension)
+    sNameTestResultFile = sTestFolder & "\" & TestFileName(sTestId, lVerificationNumber, "Result", sTestFileExtension)
+    sNameTestResultExpectedFile = sTestFolder & "\" & TestFileName(sTestId, lVerificationNumber, "Result-Expected", sTestFileExtension)
+End Sub
 Private Function AlignCntr(ByVal a_string As String, _
                            ByRef a_length As Long, _
                   Optional ByVal a_fill As String = " ", _
@@ -744,9 +842,7 @@ Private Function AlignCntr(ByVal a_string As String, _
     Dim sFill       As String
     Dim lWidth      As Long
 
-    If a_length = 0 _
-    Then Err.Raise AppErr(1), ErrSrc(PROC), "A zero length is nor supported by alignment centered!"
-
+    If a_length = 0 Then a_length = 1
     Select Case a_fill
         Case " ":        sFill = " ": sLeft = " ":          sRight = " "
         Case "-":        sFill = "-": sLeft = vbNullString: sRight = vbNullString
@@ -1143,21 +1239,6 @@ Private Function BooleanAsString(ByVal b As Boolean) As String
     If b Then BooleanAsString = "TRUE" Else BooleanAsString = "FALSE"
 End Function
 
-Public Sub BoTP()
-' ------------------------------------------------------------------------------
-' Begin of Testesd Procedure: Interface serving the 'Common VBA Error Services'
-' and - if not installed/activated the 'Common VBA Execution Trace Service'.
-' ------------------------------------------------------------------------------
-#If mErH Then          ' serves the mTrc/clsTrc when installed and active
-    mErH.BoP TestFullName
-#ElseIf clsTrc = 1 Then ' when only clsTrc is installed and active
-    If Trc Is Nothing Then Set Trc = New clsTrc
-    Trc.BoP TestFullName
-#ElseIf mTrc = 1 Then   ' when only mTrc is installed and activate
-    mTrc.BoP TestFullName
-#End If
-End Sub
-
 Private Function checkHwnds(ByRef xlApps() As Application, hWnd As LongPtr) As Boolean
 ' ------------------------------------------------------------------------------
 '
@@ -1199,15 +1280,15 @@ Public Sub CleanUp(ParamArray t_names() As Variant)
     With FSo
         For Each fle In .GetFolder(sTestFolder).Files
             '~~ Remove any temporary test file
-            If fle.Name Like "rad*" Then
+            If fle.name Like "rad*" Then
                 .DeleteFile fle.Path
             End If
             '~~ Remove when explicitly provided named
             If ArrayIsAllocated(t_names) Then
                 For Each v In t_names
                     Select Case True
-                        Case fle.Name Like v, _
-                             fle.Name Like Replace(v, v & "**", v & "*")
+                        Case fle.name Like v, _
+                             fle.name Like Replace(v, v & "**", v & "*")
                             On Error Resume Next
                             If .FileExists(fle.Path) Then
                                 If Err.Number = 0 Then
@@ -1242,7 +1323,6 @@ Public Sub CleanUp(ParamArray t_names() As Variant)
             cllTempTestItems.Remove i
         Next i
     End With
-
 
 xt: Exit Sub
 
@@ -1440,20 +1520,6 @@ Public Sub DsplyFile(ByVal d_file_name As String)
     ShellRun d_file_name
 End Sub
 
-Public Sub EoTP()
-' ------------------------------------------------------------------------------
-' End of Tested Procedure: Interface serving the 'Common VBA Error Services'
-' and - if not installed/activated the 'Common VBA Execution Trace Service'.
-' ------------------------------------------------------------------------------
-#If mErH = 1 Then          ' serves the mTrc/clsTrc when installed and active
-    mErH.EoP TestFullName, ">" & TestResult
-#ElseIf clsTrc = 1 Then ' when only clsTrc is installed and active
-    Trc.EoP TestFullName, ">" & TestResult
-#ElseIf mTrc = 1 Then   ' when only mTrc is installed and activate
-    mTrc.EoP TestFullName, ">" & TestResult
-#End If
-End Sub
-
 Private Function ErrMsg(ByVal err_source As String, _
                Optional ByVal err_no As Long = 0, _
                Optional ByVal err_dscrptn As String = vbNullString, _
@@ -1559,13 +1625,6 @@ Private Function ErrMsg(ByVal err_source As String, _
                   , Buttons:=ErrBttns)
 xt: Exit Function
 
-End Function
-
-Private Function ErrorMsgMissingVerification() As String
-    ErrorMsgMissingVerification = "For the test " & sTestId & " neither a Verification nor a Title had been specified!" & "||" & _
-                                  "Within/for an individual test number a dedicated "".Verification"", " & _
-                                  "specifying the quality/extent of the expected test result, is mandatory for each pair of .ResultExpected/.Result " & _
-                                  "statements. However, when no Verification had been specified a specified Title is used instead."
 End Function
 
 Private Function ErrSrc(ByVal sProc As String) As String
@@ -1753,7 +1812,7 @@ Private Function FileAsFile(ByVal f_file_in As File, _
     With FSo
         Select Case True
             Case f_rename And Not f_append:     If f_file_in.Path = .GetParentFolderName(f_file_out) _
-                                                Then f_file_in.Name = .GetFileName(f_file_out) _
+                                                Then f_file_in.name = .GetFileName(f_file_out) _
                                                 Else Err.Raise AppErr(1), ErrSrc(PROC), "File cannot be renamed when the provided file and the new file's name " & _
                                                                                         "do not point to the same location!"
             Case Not f_rename And Not f_append: .CopyFile f_file_in.Path, f_file_out
@@ -2031,7 +2090,7 @@ Private Function IsObject(ByVal i_var As Variant, _
     If Not VBA.IsObject(i_var) Then Exit Function
     IsObject = True
     On Error Resume Next
-    i_name = i_var.Name
+    i_name = i_var.name
     If Err.Number <> 0 _
     Then Err.Raise AppErr(1), ErrSrc(PROC), _
          "VarTrans tries to use the Name property of an object when it is to be " & _
@@ -2302,59 +2361,30 @@ End Function
 Private Function ObjectAsString(ByVal o As Object) As String
     
     On Error Resume Next
-    ObjectAsString = o.Name
+    ObjectAsString = o.name
     If Err.Number <> 0 Then ObjectAsString = "Object_" & o.HashCode
 
 End Function
 
-Private Sub ResultEvaluated(Optional ByVal r_result As Collection = Nothing, _
-                            Optional ByVal r_result_expected As Collection = Nothing, _
-                            Optional ByVal r_test_id As String = vbNullString)
+Private Sub ResultEvaluated(Optional ByVal r_result As Variant, _
+                            Optional ByVal r_result_expected As Variant)
 ' ------------------------------------------------------------------------------
 ' When test collections (r_result and r_result_expected are provided these
 ' collections are compared else the Result and the ResultExpected identified
 ' by the test-number in the dctResult and dctResultExpected Dictionaries.
 ' The first choice allows basic without using any function tested elsewhere.
 ' ------------------------------------------------------------------------------
-    Const PROC = "ResultEvaluated"
-    
-    On Error GoTo eh
-    Dim i               As Long
-    Dim sResult         As String
-    Dim sResultExpected As String
-    
+        
     sResultEvaluated = RESULT_PASSED ' the default
-    If r_result Is Nothing And r_result_expected Is Nothing Then
-        sResult = Exclude(VarAsString(dctResult(r_test_id)))
-        sResultExpected = Exclude(VarAsString(dctResultExpected(r_test_id)))
-        If StrComp(sResult _
-                 , sResultExpected _
-                 , vbBinaryCompare) <> 0 _
-        Then sResultEvaluated = RESULT_FAILED
-    Else
-        If r_result.Count <> r_result_expected.Count Then
-            sResultEvaluated = RESULT_FAILED
-            GoTo xt
-        Else
-            For i = 1 To r_result.Count
-                If StrComp(CStr(r_result(i)), CStr(r_result_expected(i)), vbBinaryCompare) <> 0 Then
-                    sResultEvaluated = RESULT_FAILED
-                    GoTo xt
-                End If
-            Next i
-        End If
+    If VarsDiffer(r_result, r_result_expected) Then
+        sResultEvaluated = RESULT_FAILED
     End If
-
+    
 xt: Exit Sub
-
-eh: Select Case ErrMsg(ErrSrc(PROC))
-        Case vbResume:  Stop: Resume
-        Case Else:      GoTo xt
-    End Select
 End Sub
 
-Private Sub ResultEvaluation(Optional ByVal r_result As Collection = Nothing, _
-                             Optional ByVal r_result_expected As Collection = Nothing)
+Private Sub ResultEvaluation(Optional ByVal r_result As Variant, _
+                             Optional ByVal r_result_expected As Variant)
 ' ----------------------------------------------------------------------------
 ' When a result Collection (r_result) and a result expected Collection
 ' (r_result_expected) is provided the two peovided Collections are compared,
@@ -2365,20 +2395,13 @@ Private Sub ResultEvaluation(Optional ByVal r_result As Collection = Nothing, _
 ' ----------------------------------------------------------------------------
     Const PROC = "ResultEvaluation"
     
-    On Error GoTo eh
     Dim cll As Collection
         
-    ResultEvaluated r_result, r_result_expected, VerificationId
+    ResultEvaluated r_result, r_result_expected
+    If sResultEvaluated = RESULT_FAILED Then
+        ResultFailedLog r_result, r_result_expected
+    End If
     If bModeRegression Then
-        '~~ In regression mode all results are collected and presented as summary
-        If Not r_result Is Nothing And Not r_result_expected Is Nothing Then
-            '~~ The Result and the ResultExpected has been provided explicitly.
-            '~~ For a correct test-id, both are saved to the dctResult and dctResultExpected
-            If dctResult.Exists(VerificationId) Then dctResult.Remove VerificationId
-            Dict(dctResult, VerificationId) = r_result
-            If dctResultExpected.Exists(VerificationId) Then dctResultExpected.Remove VerificationId
-            Dict(dctResultExpected, VerificationId) = r_result_expected
-        End If
         '~~ In regression mode the result is saved for being displayed as summary.
         Set cll = New Collection
         With cll
@@ -2387,7 +2410,7 @@ Private Sub ResultEvaluation(Optional ByVal r_result As Collection = Nothing, _
             .Add sTestedProcType
             .Add sTestedComp
             .Add sTestedProc
-            .Add sVerification
+            .Add Verification
             .Add sResultEvaluated
             If cExecTimeMsecs = 0 _
             Then .Add "n/a" _
@@ -2397,24 +2420,18 @@ Private Sub ResultEvaluation(Optional ByVal r_result As Collection = Nothing, _
         Dict(dctTestSummary, VerificationId) = cll
 '        Debug.Print ErrSrc(PROC) & ": " & r_test_id & " added to dctTestSummary"
         Set cll = Nothing
-    Else
-        '~~ In non-regression mode a failed test result is presented immediately
-        If sResultEvaluated = RESULT_FAILED Then ResultFailedLog r_result, r_result_expected, VerificationId
     End If
     
 xt: sVerification = vbNullString ' Another pair of .Result/.ResultExpected requires a new specified Verification.
-    sTitle = vbNullString
+    bResult = False
+    bResultExpected = False
+    sTitle = vbNullString ' not repeated in summary log for subsequent verifications with the same id
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
-        Case vbResume:  Stop: Resume
-        Case Else:      GoTo xt
-    End Select
 End Sub
 
-Private Sub ResultFailedLog(Optional ByVal r_result As Collection = Nothing, _
-                            Optional ByVal r_result_expected As Collection = Nothing, _
-                            Optional ByVal r_test_id As String = vbNullString)
+Private Sub ResultFailedLog(ByVal r_result As Variant, _
+                            ByVal r_result_expected As Variant)
 ' ------------------------------------------------------------------------------
 ' Displays the result of a test versus its expected result. The result is
 ' presented in three columns: Passed/Failed Result Result Expected.
@@ -2429,36 +2446,37 @@ Private Sub ResultFailedLog(Optional ByVal r_result As Collection = Nothing, _
     Dim lMaxResult          As Long
     Dim lMaxResultExpected  As Long
     Dim v                   As Variant
+    Dim s                   As String
     Dim sLine               As String
     Dim sPassedFailed       As String
     
-    If Not r_result Is Nothing And Not r_result_expected Is Nothing Then
+    If TypeName(r_result) = "Collection" And TypeName(r_result_expected) = "Collection" Then
         Set cllResult = r_result
         Set cllResultExpected = r_result_expected
     Else
-        Set cllResult = VarAsCollection(dctResult(r_test_id))
-        Set cllResultExpected = VarAsCollection(dctResultExpected(r_test_id))
+        Set cllResult = VarAsCollection(r_result)
+        Set cllResultExpected = VarAsCollection(r_result_expected)
     End If
     
     For Each v In cllResult
-        lMaxResult = Max(lMaxResult, Len(v) + 2)
+        lMaxResult = Max(1, lMaxResult, VarLen(v) + 2)
     Next v
     For Each v In cllResultExpected
-        lMaxResultExpected = Max(lMaxResultExpected, Len(v) + 2)
+        lMaxResultExpected = Max(1, lMaxResultExpected, VarLen(v) + 2)
     Next v
 
-    sLogFile = NameTestResultFile
+    sLogFile = TestFileFullName("Failed", "log")
     If FSo.FileExists(sLogFile) Then FSo.DeleteFile sLogFile
     
-    LogColsSpecs = "L" & Len(sVerification) & ", C8, L" & lMaxResult & ", L" & lMaxResultExpected
+    LogColsSpecs = "L" & Len(Verification) & ", C8, L" & lMaxResult & ", L" & lMaxResultExpected
     LogColsDelim = "|"
     LogColsHeader = "Verification, P/F, Result, Result Expected"
                   
     For i = 1 To Min(cllResult.Count, cllResultExpected.Count)
-        If StrComp(CStr(cllResult(i)), CStr(cllResultExpected(i)), vbBinaryCompare) = 0 _
-        Then sPassedFailed = "Passed" _
-        Else sPassedFailed = "Failed"
-        sLine = LogColsArrangedItems(sVerification, sPassedFailed, """" & Trim(cllResult(i)) & """", """" & Trim(cllResultExpected(i)) & """")
+        If VarsDiffer(cllResult(i), cllResultExpected(i)) _
+        Then sPassedFailed = "Failed" _
+        Else sPassedFailed = "Passed"
+        sLine = LogColsArrangedItems(Verification, sPassedFailed, """" & Trim(VarAsString(cllResult(i))) & """", """" & Trim(VarAsString(cllResultExpected(i))) & """")
         LogColsHeaderWrite l_file:=sLogFile _
                          , l_title:=sTitle _
                          , l_with_header_underline:=True _
@@ -2467,11 +2485,13 @@ Private Sub ResultFailedLog(Optional ByVal r_result As Collection = Nothing, _
     Next i
     If cllResult.Count > cllResultExpected.Count Then
         For i = i To cllResult.Count
-            StringAsFile LogColsArrangedItems(sVerification, "Failed", """" & Trim(CStr(cllResult(i))) & """", """" & vbNullString & """"), sLogFile, True
+            s = LogColsArrangedItems(Verification, "Failed", """" & Trim(VarAsString(cllResult(i))) & """", """" & vbNullString & """")
+            StringAsFile s, sLogFile, True
         Next i
     ElseIf cllResultExpected.Count > cllResult.Count Then
         For i = i To cllResultExpected.Count
-            StringAsFile LogColsArrangedItems(sVerification, "Failed", """" & vbNullString & """", """" & Trim(CStr(cllResultExpected(i)))) & """", sLogFile, True
+            s = LogColsArrangedItems(Verification, "Failed", """" & vbNullString & """", """" & Trim(VarAsString(cllResultExpected(i)))) & """"
+            StringAsFile s, sLogFile, True
         Next i
     End If
     ShellRun sLogFile ' display log
@@ -2820,18 +2840,7 @@ Public Function TestFileFullName(Optional ByVal t_name As String = vbNullString,
 ' When the extension is ommited it defaults to the property TestFileExtension
 ' which defaults to "txt".
 ' ----------------------------------------------------------------------------
-    Dim sName As String
-    Dim sExt  As String
-    Dim s     As String
-    
-    If t_name <> vbNullString Then sName = "_" & t_name
-    If t_ext = vbNullString Then sExt = TestFileExtension Else sExt = t_ext
-    
-    s = sTestFolder & "\Test-" & TestId & sName & "-" & lVerificationNumber & "." & sExt
-    s = Replace(s, "..", ".")
-    s = Replace(s, "__", "_")
-    s = Replace(s, "-_", "_")
-    TestFileFullName = s
+    TestFileFullName = sTestFolder & "\" & TestFileName(sTestId, lVerificationNumber, t_name, t_ext)
 
 End Function
 
@@ -3026,9 +3035,78 @@ Private Function VarAsString(ByVal v_items As Variant) As String
         Case VarType(v_items) = vbArray:        VarAsString = ArrayAsString(v_items)
         Case VarType(v_items) = vbBoolean:      VarAsString = BooleanAsString(v_items)
         Case VarType(v_items) = vbString:       VarAsString = StringAsString(v_items)
+        Case VBA.IsObject(v_items):             VarAsString = ObjectAsString(v_items)
         Case Else:                              VarAsString = CStr(v_items)
     End Select
     
+End Function
+
+Private Function VarLen(ByVal v_var As Variant) As Long
+    If VBA.IsObject(v_var) Then
+        If Not v_var Is Nothing Then
+            On Error Resume Next
+            VarLen = v_var.name
+            On Error GoTo -1
+        End If
+    Else
+        VarLen = Len(CStr(v_var))
+    End If
+    
+End Function
+
+Private Function VarsDiffer(Optional ByVal v_result As Variant, _
+                            Optional ByVal v_result_expected As Variant) As Boolean
+' ----------------------------------------------------------------------------
+'
+' ----------------------------------------------------------------------------
+    Const PROC = "VarsDiffer"
+    
+    Dim sResult             As String
+    Dim sResultExpected     As String
+    Dim cllResult           As Collection
+    Dim cllResultExpected   As Collection
+    Dim i                   As Long
+    
+    If VBA.IsObject(v_result) And VBA.IsObject(v_result) Then
+         Select Case True
+            Case TypeName(v_result) = "Collection" And TypeName(v_result_expected) = "Collection"
+                Set cllResult = v_result
+                Set cllResultExpected = v_result_expected
+                For i = 1 To cllResult.Count
+                    If VarsDiffer(cllResult(i), cllResultExpected(i)) Then
+                        VarsDiffer = True
+                        GoTo xt
+                    End If
+                Next i
+
+            Case TypeName(v_result) = "Dictionary" And TypeName(v_result_expected) = "Dictionary"
+            Case TypeName(v_result) = "File" And TypeName(v_result_expected) = "File"
+                '~~ Compare considering a possibly excluded part of the lines
+                '~~ Note: A file is always regarded as a Textstream file
+                sResult = Exclude(VarAsString(v_result))
+                sResultExpected = Exclude(VarAsString(v_result_expected))
+                If StrComp(sResult _
+                         , sResultExpected _
+                         , vbBinaryCompare) <> 0 Then
+                    VarsDiffer = True
+                End If
+            Case TypeName(v_result) = TypeName(v_result_expected)
+                VarsDiffer = Not v_result Is v_result_expected
+            Case Else
+                    Err.Raise AppErr(1), ErrSrc(PROC), _
+                              "The Result and the ResultExpected are different types of objects but need to be the same!"
+                
+        End Select
+    ElseIf TypeName(v_result) = TypeName(v_result_expected) Then
+        VarsDiffer = StrComp(CStr(v_result) _
+                           , CStr(v_result_expected) _
+                           , vbBinaryCompare) <> 0
+    Else
+        Err.Raise AppErr(1), ErrSrc(PROC), _
+                  "The Result and the ResultExpected have different date types but need to be the same!"
+    End If
+    
+xt: Exit Function
 End Function
 
 Private Function VerificationId() As String
@@ -3060,7 +3138,7 @@ Private Function WbkExists(ByVal ex_wbk As Variant) As Boolean
     WbkExists = FSo.FileExists(ex_wbk)
     If Not WbkExists Then
         On Error Resume Next
-        WbkExists = Application.Workbooks(ex_wbk) = Application.Workbooks(ex_wbk).Name
+        WbkExists = Application.Workbooks(ex_wbk) = Application.Workbooks(ex_wbk).name
     End If
                 
 xt: Exit Function
